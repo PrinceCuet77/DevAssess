@@ -7,4 +7,6 @@ router.post('/register', AuthControllers.registerUser);
 
 router.post('/verify-email', AuthControllers.verifyUserEmail);
 
+router.post('/login', AuthControllers.loginUser);
+
 export const AuthRoutes = router;
