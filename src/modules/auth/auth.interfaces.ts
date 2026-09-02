@@ -1,0 +1,11 @@
+import { Role } from '../../../generated/prisma/enums';
+
+export interface IRegisterPayload {
+  email: string;
+  password: string;
+  role: Role;
+}
+
+export interface IRegistrationOtpPayload extends IRegisterPayload {
+  linkToUserId: string | null;
+}

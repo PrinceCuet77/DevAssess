@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verify your email</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f5f7; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7; padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(16,24,40,0.06);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#111827; padding:28px 32px; text-align:center;">
+              <span style="font-size:20px; font-weight:700; color:#ffffff; letter-spacing:0.3px;">DevAssess</span>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 32px 24px 32px;">
+              <h1 style="margin:0 0 12px 0; font-size:20px; line-height:28px; color:#111827; font-weight:700;">
+                Verify your email address
+              </h1>
+              <p style="margin:0 0 24px 0; font-size:14px; line-height:22px; color:#4b5563;">
+                Hi, thanks for signing up. Use the verification code below to complete your registration for
+                <strong style="color:#111827;"><%= email %></strong>.
+              </p>
+
+              <!-- OTP box -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:8px 0 8px 0;">
+                    <div style="display:inline-block; background-color:#f4f5f7; border:1px dashed #d1d5db; border-radius:10px; padding:18px 32px;">
+                      <span style="font-size:32px; font-weight:700; letter-spacing:10px; color:#111827;">
+                        <%= otp %>
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:24px 0 0 0; font-size:13px; line-height:20px; color:#6b7280; text-align:center;">
+                This code will expire in <strong style="color:#374151;"><%= expirationMinutes %> minutes</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 32px;">
+              <div style="border-top:1px solid #e5e7eb;"></div>
+            </td>
+          </tr>
+
+          <!-- Footer note -->
+          <tr>
+            <td style="padding:20px 32px 32px 32px;">
+              <p style="margin:0; font-size:12px; line-height:18px; color:#9ca3af;">
+                Didn't request this code? You can safely ignore this email — no account will be created without verification.
+                Never share this code with anyone, including DevAssess staff.
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:20px 0 0 0; font-size:12px; color:#9ca3af;">
+          &copy; <%= new Date().getFullYear() %> DevAssess. All rights reserved.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
