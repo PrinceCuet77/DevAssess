@@ -1,0 +1,22 @@
+model Payment {
+  id            String  @id @default(uuid())
+  transactionId String  @unique // tran_id sent to SSLCommerz
+  valId         String? @unique // val_id returned by SSLCommerz on success
+
+  amount   Decimal       @db.Decimal(10, 2)
+  currency String        @default("BDT")
+  status   PaymentStatus @default(PENDING)
+  method   String? // e.g. card_type / mobile banking type from SSLCommerz
+
+  paidAt          DateTime?
+  gatewayResponse Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseId])
+  @@map("payments")
+}

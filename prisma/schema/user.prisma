@@ -1,0 +1,30 @@
+model User {
+  id         String     @id @default(uuid())
+  email      String     @unique
+  password   String?
+  role       Role       @default(DEVELOPER)
+  status     UserStatus @default(NOT_VERIFIED)
+  name       String?
+  bio        String?
+  profession String?
+  company    String?
+  experience Int        @default(0)
+  skills     String[]
+
+  avatarUrl String?
+  avatarKey String?
+
+  auths Auth[]
+
+  assessments Assessment[]
+
+  purchaseAssessments Purchase[]
+  reviews             Review[]
+  attempts            Attempt[]
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}

@@ -1,0 +1,25 @@
+model Attempt {
+  id String @id @default(uuid())
+
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  developerId String
+  developer   User   @relation(fields: [developerId], references: [id], onDelete: Cascade)
+
+  score   Int?
+  passed  Boolean?
+
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  submittedAt DateTime?
+  evaluatedAt DateTime?
+  status AttemptStatus @default(IDLE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assessmentId])
+  @@index([developerId])
+  @@map("attempts")
+}

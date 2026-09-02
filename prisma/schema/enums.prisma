@@ -1,0 +1,40 @@
+enum Role {
+  DEVELOPER
+  EVALUATOR
+  ADMIN
+}
+
+enum AuthProvider {
+  CREDENTIALS
+  GOOGLE
+}
+
+enum UserStatus {
+  NOT_VERIFIED
+  VERIFIED
+  DELETED
+  SUSPENDED
+}
+
+enum AssessmentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  DELETED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum AttemptStatus {
+  IDLE
+  IN_PROGRESS
+  SUBMITTED
+  EVALUATED
+  EXPIRED
+}

@@ -1,0 +1,32 @@
+model Assessment {
+  id        String @id @default(uuid())
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Restrict)
+
+  title       String
+  slug        String  @unique
+  description String?
+
+  duration     Int // minutes
+  price        Decimal   @db.Decimal(10, 2)
+  passingScore Int
+  attempts     Attempt[]
+
+  status AssessmentStatus @default(DRAFT)
+
+  publishedAt DateTime?
+  deletedAt   DateTime?
+
+  questions Json
+  answers Json
+
+  purchases Purchase[]
+  reviews   Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([createdAt])
+}
