@@ -179,6 +179,7 @@ const verifyUserEmail = async (payload: IVerifyEmailPayload) => {
   );
 
   const templateData = {
+    email: createdUser.email,
     role: createdUser.role === Role.DEVELOPER ? 'Developer' : 'Evaluator',
   };
 

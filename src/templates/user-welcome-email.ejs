@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Welcome to DevAssess</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f5f7; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7; padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(16,24,40,0.06);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#111827; padding:28px 32px; text-align:center;">
+              <span style="font-size:20px; font-weight:700; color:#ffffff; letter-spacing:0.3px;">DevAssess</span>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 32px 24px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:20px;">
+                    <div style="width:56px; height:56px; border-radius:50%; background-color:#ecfdf5; line-height:56px; text-align:center;">
+                      <span style="font-size:26px; line-height:56px;">&#127881;</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <h1 style="margin:0 0 12px 0; font-size:20px; line-height:28px; color:#111827; font-weight:700; text-align:center;">
+                Welcome to DevAssess!
+              </h1>
+              <p style="margin:0 0 16px 0; font-size:14px; line-height:22px; color:#4b5563; text-align:center;">
+                Your account <strong style="color:#111827;"><%= email %></strong> has been verified and is
+                ready to go as a <strong style="color:#111827;"><%= role %></strong>.
+              </p>
+
+              <p style="margin:0; font-size:14px; line-height:22px; color:#4b5563; text-align:center;">
+                <% if (role === 'Developer') { %>
+                  You can now browse assessments, sharpen your skills, and track your progress right from your dashboard.
+                <% } else { %>
+                  You can now create assessments, review submissions, and manage attempts right from your dashboard.
+                <% } %>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 32px;">
+              <div style="border-top:1px solid #e5e7eb;"></div>
+            </td>
+          </tr>
+
+          <!-- Footer note -->
+          <tr>
+            <td style="padding:20px 32px 32px 32px;">
+              <p style="margin:0; font-size:12px; line-height:18px; color:#9ca3af; text-align:center;">
+                Didn't create this account? Please contact our support team right away.
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:20px 0 0 0; font-size:12px; color:#9ca3af;">
+          &copy; <%= new Date().getFullYear() %> DevAssess. All rights reserved.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
