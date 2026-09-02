@@ -6,7 +6,7 @@ import { AuthServices } from './auth.services';
 
 const registerUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    await AuthServices.registerUserIntoDB(req.body);
+    await AuthServices.registerUser(req.body);
 
     sendResponse(res, {
       success: true,
@@ -17,6 +17,20 @@ const registerUser = catchAsync(
   },
 );
 
+const verifyUserEmail = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await AuthServices.verifyUserEmail(req.body);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.CREATED,
+      message: 'Email verified & user registered successfully',
+      data: null,
+    });
+  },
+);
+
 export const AuthControllers = {
   registerUser,
+  verifyUserEmail,
 };

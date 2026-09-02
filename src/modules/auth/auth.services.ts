@@ -1,4 +1,3 @@
-
 import { prisma } from '../../lib/prisma';
 import { ApiError } from '../../errors/ApiError';
 import httpStatus from 'http-status';
@@ -14,11 +13,16 @@ import {
 import { redisClient } from '../../lib/redis';
 import { transporter } from '../../lib/nodemailer';
 import ejs from 'ejs';
-import { IRegisterPayload, IRegistrationOtpPayload } from './auth.interfaces';
+import {
+  IRegisterPayload,
+  IRegistrationOtpPayload,
+  IVerifyEmailPayload,
+} from './auth.interfaces';
+import { JwtPayload, SignOptions } from 'jsonwebtoken';
+import { jwtUtils } from '../../utils/jwt';
 
-const registerUserIntoDB = async (payload: IRegisterPayload) => {
+const registerUser = async (payload: IRegisterPayload) => {
   const { password, role } = payload;
-
   const email = payload.email.trim().toLowerCase();
 
   const existingUser = await prisma.user.findUnique({
@@ -109,6 +113,110 @@ const registerUserIntoDB = async (payload: IRegisterPayload) => {
   });
 };
 
+const verifyUserEmail = async (payload: IVerifyEmailPayload) => {
+  const otp = payload.otp;
+  const email = payload.email.trim().toLowerCase();
+
+  const otpKey = `user-registration-otp:${email}`;
+  const redisOtp = await redisClient.get(otpKey);
+  if (!redisOtp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
+  }
+
+  if (redisOtp !== otp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'OTP Does Not Match');
+  }
+
+  await redisClient.del(otpKey);
+
+  const userRegistrationKey = `user-registration-data:${email}`;
+  const redisUserData = await redisClient.get(userRegistrationKey);
+
+  if (!redisUserData) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User doesnt exist!');
+  }
+
+  const userPayload: IRegistrationOtpPayload = JSON.parse(redisUserData);
+
+  const createdUser = userPayload.linkToUserId
+    ? await prisma.user.update({
+        where: { id: userPayload.linkToUserId },
+        data: {
+          password: userPayload.password,
+          status: UserStatus.VERIFIED,
+          auths: {
+            create: {
+              provider: AuthProvider.CREDENTIALS,
+              providerId: email,
+            },
+          },
+        },
+        omit: { password: true },
+        include: { auths: true },
+      })
+    : await prisma.user.create({
+        data: {
+          email: userPayload.email,
+          password: userPayload.password,
+          role: userPayload.role,
+          status: UserStatus.VERIFIED,
+          auths: {
+            create: {
+              provider: AuthProvider.CREDENTIALS,
+              providerId: email,
+            },
+          },
+        },
+        omit: { password: true },
+        include: { auths: true },
+      });
+
+  await redisClient.del(userRegistrationKey);
+
+  const tempatePath = path.join(
+    process.cwd(),
+    'src/templates/user-welcome-email.ejs',
+  );
+
+  const templateData = {
+    role: createdUser.role === Role.DEVELOPER ? 'Developer' : 'Evaluator',
+  };
+
+  const html = await ejs.renderFile(tempatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: 'Welcome To User Management System',
+    html,
+  });
+
+  const jwtPayload = {
+    userId: createdUser.id,
+    email: createdUser.email,
+    role: createdUser.role,
+  };
+
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_access_secret,
+    config.jwt_access_expires_in as SignOptions,
+  );
+
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_refresh_secret,
+    config.jwt_refresh_expires_in as SignOptions,
+  );
+
+  return {
+    createdUser,
+    accessToken,
+    refreshToken,
+  };
+};
+
 export const AuthServices = {
-  registerUserIntoDB,
+  registerUser,
+  verifyUserEmail,
 };

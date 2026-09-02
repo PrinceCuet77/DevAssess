@@ -9,3 +9,8 @@ export interface IRegisterPayload {
 export interface IRegistrationOtpPayload extends IRegisterPayload {
   linkToUserId: string | null;
 }
+
+export interface IVerifyEmailPayload {
+  email: string;
+  otp: string;
+}
