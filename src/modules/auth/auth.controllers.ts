@@ -9,6 +9,7 @@ import { IVerifyOptions } from 'passport-local';
 import { createUserTokens } from '../../utils/authToken';
 import { clearAuthCookie, setAuthCookie } from '../../utils/authCookie';
 import { UnauthorizedError } from '../../errors/ApiError';
+import config from '../../config';
 
 const registerUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -119,10 +120,42 @@ const refreshToken = catchAsync(
   },
 );
 
+const googleCallback = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate(
+      'google',
+      async (err: Error, user: User, info: IVerifyOptions) => {
+        try {
+          if (err) {
+            return next(err || 'Google authentication Failed');
+          }
+          if (!user) {
+            return next(
+              new Error(info?.message || 'Google authentication Failed'),
+            );
+          }
+
+          const { accessToken, refreshToken } = createUserTokens(
+            user.id,
+            user.email,
+            user.role,
+          );
+
+          setAuthCookie(res, { accessToken, refreshToken });
+          res.redirect(`${config.frontend_url}/auth/success`);
+        } catch (error) {
+          next(error);
+        }
+      },
+    )(req, res, next);
+  },
+);
+
 export const AuthControllers = {
   registerUser,
   verifyUserEmail,
   loginUser,
   logoutUser,
   refreshToken,
+  googleCallback,
 };
