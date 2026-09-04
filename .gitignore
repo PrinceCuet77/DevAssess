@@ -144,4 +144,5 @@ vite.config.ts.timestamp-*
 
 package-lock.json
 .vercel
+CLAUDE.md
 /docs
