@@ -14,6 +14,7 @@ import { redisClient } from '../../lib/redis';
 import { transporter } from '../../lib/nodemailer';
 import ejs from 'ejs';
 import {
+  IForgotPasswordPayload,
   IRegisterPayload,
   IRegistrationOtpPayload,
   IVerifyEmailPayload,
@@ -258,8 +259,81 @@ const refreshTokenIntoNewAccessToken = async (token: string) => {
   };
 };
 
+const forgotPassword = async (payload: IForgotPasswordPayload) => {
+  const email = payload.email.trim().toLowerCase();
+
+  const isUserExist = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    include: {
+      auths: true,
+    },
+  });
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User is not found!');
+  }
+
+  if (isUserExist.status === UserStatus.SUSPENDED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is suspended');
+  }
+
+  if (isUserExist.status === UserStatus.NOT_VERIFIED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User Not Verified');
+  }
+
+  if (isUserExist.status === UserStatus.DELETED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is Deleted');
+  }
+
+  const hasCredentials = isUserExist.auths.some(
+    (auth) => auth.provider === AuthProvider.CREDENTIALS,
+  );
+
+  if (!hasCredentials) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'This account only has a Google login, there is no password to reset',
+    );
+  }
+
+  const otp = crypto.randomInt(100000, 1000000).toString();
+  const key = `forgor-password-otp:${isUserExist.email}`;
+  const expirationSeconds = 5 * 60;
+
+  await redisClient.set(key, otp, {
+    expiration: {
+      type: 'EX',
+      value: expirationSeconds,
+    },
+  });
+
+  const tempatePath = path.join(
+    process.cwd(),
+    'src/templates/forgot-password.ejs',
+  );
+
+  const templateData = {
+    email: isUserExist.email,
+    otp,
+    expirationMinutes: expirationSeconds / 60,
+  };
+
+  const html = await ejs.renderFile(tempatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: isUserExist.email,
+    subject: 'Forgot Password',
+    html,
+  });
+};
+
+
 export const AuthServices = {
   registerUser,
   verifyUserEmail,
   refreshTokenIntoNewAccessToken,
+  forgotPassword,
 };

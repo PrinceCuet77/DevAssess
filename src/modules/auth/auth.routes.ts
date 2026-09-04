@@ -35,4 +35,10 @@ router.get(
 
 router.get('/google/callback', AuthControllers.googleCallback);
 
+router.post(
+  '/forgot-password',
+  validate(AuthValidators.forgotPasswordSchema),
+  AuthControllers.forgotPassword,
+);
+
 export const AuthRoutes = router;

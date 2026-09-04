@@ -14,3 +14,7 @@ export interface IVerifyEmailPayload {
   email: string;
   otp: string;
 }
+
+export interface IForgotPasswordPayload {
+  email: string;
+}

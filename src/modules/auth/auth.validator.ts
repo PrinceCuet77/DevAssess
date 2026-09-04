@@ -17,8 +17,13 @@ const loginUserSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
+});
+
 export const AuthValidators = {
   registerUserSchema,
   verifyUserEmailSchema,
   loginUserSchema,
+  forgotPasswordSchema,
 };

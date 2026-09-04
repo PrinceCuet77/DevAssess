@@ -151,6 +151,19 @@ const googleCallback = catchAsync(
   },
 );
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+
+  await AuthServices.forgotPassword(payload);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `OTP Sent To Email : ${payload.email}`,
+    data: null,
+  });
+});
+
 export const AuthControllers = {
   registerUser,
   verifyUserEmail,
@@ -158,4 +171,5 @@ export const AuthControllers = {
   logoutUser,
   refreshToken,
   googleCallback,
+  forgotPassword,
 };
