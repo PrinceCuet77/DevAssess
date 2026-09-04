@@ -17,6 +17,7 @@ import {
   IForgotPasswordPayload,
   IRegisterPayload,
   IRegistrationOtpPayload,
+  IResetPasswordPayload,
   IVerifyEmailPayload,
 } from './auth.interfaces';
 import { JwtPayload, SignOptions } from 'jsonwebtoken';
@@ -330,10 +331,96 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   });
 };
 
+const resetPassword = async (payload: IResetPasswordPayload) => {
+  const { otp, newPassword } = payload;
+  const email = payload.email.trim().toLowerCase();
+
+  const isUserExist = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    include: {
+      auths: true,
+    },
+  });
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User is not found!');
+  }
+
+  if (isUserExist.status === UserStatus.SUSPENDED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is suspended');
+  }
+
+  if (isUserExist.status === UserStatus.NOT_VERIFIED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User Not Verified');
+  }
+
+  if (isUserExist.status === UserStatus.DELETED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is Deleted');
+  }
+
+  const hasCredentials = isUserExist.auths.some(
+    (auth) => auth.provider === AuthProvider.CREDENTIALS,
+  );
+
+  if (!hasCredentials) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'This account only has a Google login, there is no password to reset',
+    );
+  }
+
+  const key = `forgor-password-otp:${isUserExist.email}`;
+
+  const redisOtp = await redisClient.get(key);
+  if (!redisOtp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid OTP');
+  }
+
+  if (redisOtp !== otp) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'OTP Does Not Match');
+  }
+
+  const hashedNewPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  await prisma.user.update({
+    where: {
+      email: isUserExist.email,
+    },
+    data: {
+      password: hashedNewPassword,
+    },
+  });
+
+  await redisClient.del(key);
+
+  const tempatePath = path.join(
+    process.cwd(),
+    'src/templates/reset-password.ejs',
+  );
+
+  const templateData = {
+    name: isUserExist.name || 'there',
+  };
+
+  const html = await ejs.renderFile(tempatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: isUserExist.email,
+    subject: 'Password Changed',
+    html,
+  });
+};
 
 export const AuthServices = {
   registerUser,
   verifyUserEmail,
   refreshTokenIntoNewAccessToken,
   forgotPassword,
+  resetPassword,
 };
