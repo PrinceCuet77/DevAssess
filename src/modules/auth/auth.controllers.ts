@@ -8,6 +8,7 @@ import { User } from '../../../generated/prisma/client';
 import { IVerifyOptions } from 'passport-local';
 import { createUserTokens } from '../../utils/authToken';
 import { clearAuthCookie, setAuthCookie } from '../../utils/authCookie';
+import { UnauthorizedError } from '../../errors/ApiError';
 
 const registerUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -87,9 +88,41 @@ const logoutUser = catchAsync(
   },
 );
 
+const refreshToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.refreshToken
+      ? req.cookies.refreshToken
+      : req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization?.split(' ')[1]
+        : req.headers.authorization;
+
+    if (!token) {
+      throw new UnauthorizedError(
+        'Refresh token not found. Please log in again.',
+      );
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await AuthServices.refreshTokenIntoNewAccessToken(token);
+
+    setAuthCookie(res, { accessToken, refreshToken: newRefreshToken });
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Access token refreshed successfully',
+      data: {
+        accessToken,
+        refreshToken: newRefreshToken,
+      },
+    });
+  },
+);
+
 export const AuthControllers = {
   registerUser,
   verifyUserEmail,
   loginUser,
   logoutUser,
+  refreshToken,
 };

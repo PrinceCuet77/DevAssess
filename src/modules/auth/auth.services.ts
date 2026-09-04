@@ -20,6 +20,7 @@ import {
 } from './auth.interfaces';
 import { JwtPayload, SignOptions } from 'jsonwebtoken';
 import { jwtUtils } from '../../utils/jwt';
+import { createUserTokens } from '../../utils/authToken';
 
 const registerUser = async (payload: IRegisterPayload) => {
   const { password, role } = payload;
@@ -217,7 +218,48 @@ const verifyUserEmail = async (payload: IVerifyEmailPayload) => {
   };
 };
 
+const refreshTokenIntoNewAccessToken = async (token: string) => {
+  const verifiedToken = jwtUtils.verifyToken(token, config.jwt_refresh_secret);
+
+  if (!verifiedToken.success) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      'Invalid or expired refresh token',
+    );
+  }
+
+  // Payload/user lookup is provider-agnostic — works the same whether the
+  // session originated from credentials login or Google login.
+  const { id } = verifiedToken.data as JwtPayload;
+
+  const user = await prisma.user.findUnique({ where: { id } });
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  if (user.status === UserStatus.SUSPENDED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is suspended');
+  }
+
+  if (user.status === UserStatus.DELETED) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is deleted');
+  }
+
+  const { accessToken, refreshToken } = createUserTokens(
+    user.id,
+    user.email,
+    user.role,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
 export const AuthServices = {
   registerUser,
   verifyUserEmail,
+  refreshTokenIntoNewAccessToken,
 };
