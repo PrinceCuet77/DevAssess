@@ -47,7 +47,14 @@ router.patch(
   auth(Role.EVALUATOR),
   validate(getAssessmentByIdParamSchema, 'params'),
   validate(updateAssessmentSchema),
-  EvaluatorControllers.updateSingleAssessmentByIdForEvaluatorOrAdmin,
+  EvaluatorControllers.updateSingleAssessmentById,
+);
+
+router.delete(
+  '/assessments/:assessmentId',
+  auth(Role.EVALUATOR),
+  validate(getAssessmentByIdParamSchema, 'params'),
+  EvaluatorControllers.deleteSingleAssessmentById,
 );
 
 export const EvaluatorRoutes = router;

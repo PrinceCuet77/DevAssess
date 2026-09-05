@@ -254,10 +254,36 @@ const updateSingleAssessmentById = async (
   return assessmentResponse;
 };
 
+const deleteSingleAssessmentById = async (
+  userId: string,
+  assessmentId: string,
+) => {
+  const assessment = await prisma.assessment.findUnique({
+    where: { id: assessmentId, creatorId: userId },
+  });
+
+  if (!assessment) {
+    throw new NotFoundError('Assessment not found or access denied');
+  }
+
+  if (assessment.status === AssessmentStatus.DELETED) {
+    throw new NotFoundError('Assessment not found or access denied');
+  }
+
+  await prisma.assessment.update({
+    where: { id: assessmentId },
+    data: {
+      status: AssessmentStatus.DELETED,
+      deletedAt: new Date(),
+    },
+  });
+};
+
 export const EvaluatorServices = {
   presignThumbnailUpload,
   createAssessmentInDB,
   getMyCreatedAssessments,
   getSingleAssessmentById,
   updateSingleAssessmentById,
+  deleteSingleAssessmentById,
 };

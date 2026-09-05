@@ -75,7 +75,7 @@ const getSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
   },
 );
 
-const updateSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
+const updateSingleAssessmentById = catchAsync(
   async (req: Request, res: Response) => {
     const providerId = req.user?.id as string;
     const assessmentId = req.params.assessmentId as string;
@@ -94,10 +94,29 @@ const updateSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
   },
 );
 
+const deleteSingleAssessmentById = catchAsync(
+  async (req: Request, res: Response) => {
+    const providerId = req.user?.id as string;
+    const assessmentId = req.params.assessmentId as string;
+    await EvaluatorServices.deleteSingleAssessmentById(
+      providerId,
+      assessmentId,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment is deleted successfully',
+      data: null,
+    });
+  },
+);
+
 export const EvaluatorControllers = {
   presignThumbnailUpload,
   createAssessment,
   getMyCreatedAssessments,
   getSingleAssessmentByIdForEvaluatorOrAdmin,
-  updateSingleAssessmentByIdForEvaluatorOrAdmin,
+  updateSingleAssessmentById,
+  deleteSingleAssessmentById,
 };
