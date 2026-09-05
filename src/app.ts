@@ -7,6 +7,7 @@ import { AuthRoutes } from './modules/auth/auth.routes';
 import { UserRoutes } from './modules/user/user.routes';
 import passport from 'passport';
 import './config/passport';
+import { EvaluatorRoutes } from './modules/evaluator/evaluator.routes';
 
 const app: Application = express();
 
@@ -23,6 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/api/v1/auth', AuthRoutes);
 app.use('/api/v1/users', UserRoutes);
+app.use('/api/v1/evaluator', EvaluatorRoutes);
 
 app.use(notFound);
 

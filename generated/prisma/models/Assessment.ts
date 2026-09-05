@@ -29,13 +29,13 @@ export type AggregateAssessment = {
 export type AssessmentAvgAggregateOutputType = {
   duration: number | null
   price: runtime.Decimal | null
-  passingScore: number | null
+  passingPercentage: number | null
 }
 
 export type AssessmentSumAggregateOutputType = {
   duration: number | null
   price: runtime.Decimal | null
-  passingScore: number | null
+  passingPercentage: number | null
 }
 
 export type AssessmentMinAggregateOutputType = {
@@ -44,9 +44,11 @@ export type AssessmentMinAggregateOutputType = {
   title: string | null
   slug: string | null
   description: string | null
+  thumbnailUrl: string | null
+  thumbnailKey: string | null
   duration: number | null
   price: runtime.Decimal | null
-  passingScore: number | null
+  passingPercentage: number | null
   status: $Enums.AssessmentStatus | null
   publishedAt: Date | null
   deletedAt: Date | null
@@ -60,9 +62,11 @@ export type AssessmentMaxAggregateOutputType = {
   title: string | null
   slug: string | null
   description: string | null
+  thumbnailUrl: string | null
+  thumbnailKey: string | null
   duration: number | null
   price: runtime.Decimal | null
-  passingScore: number | null
+  passingPercentage: number | null
   status: $Enums.AssessmentStatus | null
   publishedAt: Date | null
   deletedAt: Date | null
@@ -76,9 +80,11 @@ export type AssessmentCountAggregateOutputType = {
   title: number
   slug: number
   description: number
+  thumbnailUrl: number
+  thumbnailKey: number
   duration: number
   price: number
-  passingScore: number
+  passingPercentage: number
   status: number
   publishedAt: number
   deletedAt: number
@@ -93,13 +99,13 @@ export type AssessmentCountAggregateOutputType = {
 export type AssessmentAvgAggregateInputType = {
   duration?: true
   price?: true
-  passingScore?: true
+  passingPercentage?: true
 }
 
 export type AssessmentSumAggregateInputType = {
   duration?: true
   price?: true
-  passingScore?: true
+  passingPercentage?: true
 }
 
 export type AssessmentMinAggregateInputType = {
@@ -108,9 +114,11 @@ export type AssessmentMinAggregateInputType = {
   title?: true
   slug?: true
   description?: true
+  thumbnailUrl?: true
+  thumbnailKey?: true
   duration?: true
   price?: true
-  passingScore?: true
+  passingPercentage?: true
   status?: true
   publishedAt?: true
   deletedAt?: true
@@ -124,9 +132,11 @@ export type AssessmentMaxAggregateInputType = {
   title?: true
   slug?: true
   description?: true
+  thumbnailUrl?: true
+  thumbnailKey?: true
   duration?: true
   price?: true
-  passingScore?: true
+  passingPercentage?: true
   status?: true
   publishedAt?: true
   deletedAt?: true
@@ -140,9 +150,11 @@ export type AssessmentCountAggregateInputType = {
   title?: true
   slug?: true
   description?: true
+  thumbnailUrl?: true
+  thumbnailKey?: true
   duration?: true
   price?: true
-  passingScore?: true
+  passingPercentage?: true
   status?: true
   publishedAt?: true
   deletedAt?: true
@@ -245,9 +257,11 @@ export type AssessmentGroupByOutputType = {
   title: string
   slug: string
   description: string | null
+  thumbnailUrl: string | null
+  thumbnailKey: string | null
   duration: number
   price: runtime.Decimal
-  passingScore: number
+  passingPercentage: number
   status: $Enums.AssessmentStatus
   publishedAt: Date | null
   deletedAt: Date | null
@@ -286,9 +300,11 @@ export type AssessmentWhereInput = {
   title?: Prisma.StringFilter<"Assessment"> | string
   slug?: Prisma.StringFilter<"Assessment"> | string
   description?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailUrl?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailKey?: Prisma.StringNullableFilter<"Assessment"> | string | null
   duration?: Prisma.IntFilter<"Assessment"> | number
   price?: Prisma.DecimalFilter<"Assessment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFilter<"Assessment"> | number
+  passingPercentage?: Prisma.IntFilter<"Assessment"> | number
   status?: Prisma.EnumAssessmentStatusFilter<"Assessment"> | $Enums.AssessmentStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
@@ -308,9 +324,11 @@ export type AssessmentOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnailKey?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -333,9 +351,11 @@ export type AssessmentWhereUniqueInput = Prisma.AtLeast<{
   creatorId?: Prisma.StringFilter<"Assessment"> | string
   title?: Prisma.StringFilter<"Assessment"> | string
   description?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailUrl?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailKey?: Prisma.StringNullableFilter<"Assessment"> | string | null
   duration?: Prisma.IntFilter<"Assessment"> | number
   price?: Prisma.DecimalFilter<"Assessment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFilter<"Assessment"> | number
+  passingPercentage?: Prisma.IntFilter<"Assessment"> | number
   status?: Prisma.EnumAssessmentStatusFilter<"Assessment"> | $Enums.AssessmentStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
@@ -355,9 +375,11 @@ export type AssessmentOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnailKey?: Prisma.SortOrderInput | Prisma.SortOrder
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -381,9 +403,11 @@ export type AssessmentScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
+  thumbnailUrl?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
+  thumbnailKey?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
   duration?: Prisma.IntWithAggregatesFilter<"Assessment"> | number
   price?: Prisma.DecimalWithAggregatesFilter<"Assessment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntWithAggregatesFilter<"Assessment"> | number
+  passingPercentage?: Prisma.IntWithAggregatesFilter<"Assessment"> | number
   status?: Prisma.EnumAssessmentStatusWithAggregatesFilter<"Assessment"> | $Enums.AssessmentStatus
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Assessment"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Assessment"> | Date | string | null
@@ -398,9 +422,11 @@ export type AssessmentCreateInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -420,9 +446,11 @@ export type AssessmentUncheckedCreateInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -440,9 +468,11 @@ export type AssessmentUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -462,9 +492,11 @@ export type AssessmentUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -483,9 +515,11 @@ export type AssessmentCreateManyInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -500,9 +534,11 @@ export type AssessmentUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -518,9 +554,11 @@ export type AssessmentUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -536,9 +574,11 @@ export type AssessmentCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  thumbnailUrl?: Prisma.SortOrder
+  thumbnailKey?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -551,7 +591,7 @@ export type AssessmentCountOrderByAggregateInput = {
 export type AssessmentAvgOrderByAggregateInput = {
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
 }
 
 export type AssessmentMaxOrderByAggregateInput = {
@@ -560,9 +600,11 @@ export type AssessmentMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  thumbnailUrl?: Prisma.SortOrder
+  thumbnailKey?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -576,9 +618,11 @@ export type AssessmentMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  thumbnailUrl?: Prisma.SortOrder
+  thumbnailKey?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -589,7 +633,7 @@ export type AssessmentMinOrderByAggregateInput = {
 export type AssessmentSumOrderByAggregateInput = {
   duration?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  passingScore?: Prisma.SortOrder
+  passingPercentage?: Prisma.SortOrder
 }
 
 export type AssessmentScalarRelationFilter = {
@@ -732,9 +776,11 @@ export type AssessmentCreateWithoutAttemptsInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -753,9 +799,11 @@ export type AssessmentUncheckedCreateWithoutAttemptsInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -788,9 +836,11 @@ export type AssessmentUpdateWithoutAttemptsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -809,9 +859,11 @@ export type AssessmentUncheckedUpdateWithoutAttemptsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -828,9 +880,11 @@ export type AssessmentCreateWithoutPurchasesInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -849,9 +903,11 @@ export type AssessmentUncheckedCreateWithoutPurchasesInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -884,9 +940,11 @@ export type AssessmentUpdateWithoutPurchasesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -905,9 +963,11 @@ export type AssessmentUncheckedUpdateWithoutPurchasesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -924,9 +984,11 @@ export type AssessmentCreateWithoutReviewsInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -945,9 +1007,11 @@ export type AssessmentUncheckedCreateWithoutReviewsInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -980,9 +1044,11 @@ export type AssessmentUpdateWithoutReviewsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1001,9 +1067,11 @@ export type AssessmentUncheckedUpdateWithoutReviewsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1020,9 +1088,11 @@ export type AssessmentCreateWithoutCreatorInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1040,9 +1110,11 @@ export type AssessmentUncheckedCreateWithoutCreatorInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1090,9 +1162,11 @@ export type AssessmentScalarWhereInput = {
   title?: Prisma.StringFilter<"Assessment"> | string
   slug?: Prisma.StringFilter<"Assessment"> | string
   description?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailUrl?: Prisma.StringNullableFilter<"Assessment"> | string | null
+  thumbnailKey?: Prisma.StringNullableFilter<"Assessment"> | string | null
   duration?: Prisma.IntFilter<"Assessment"> | number
   price?: Prisma.DecimalFilter<"Assessment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFilter<"Assessment"> | number
+  passingPercentage?: Prisma.IntFilter<"Assessment"> | number
   status?: Prisma.EnumAssessmentStatusFilter<"Assessment"> | $Enums.AssessmentStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Assessment"> | Date | string | null
@@ -1107,9 +1181,11 @@ export type AssessmentCreateManyCreatorInput = {
   title: string
   slug: string
   description?: string | null
+  thumbnailUrl?: string | null
+  thumbnailKey?: string | null
   duration: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore: number
+  passingPercentage: number
   status?: $Enums.AssessmentStatus
   publishedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1124,9 +1200,11 @@ export type AssessmentUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1144,9 +1222,11 @@ export type AssessmentUncheckedUpdateWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1164,9 +1244,11 @@ export type AssessmentUncheckedUpdateManyWithoutCreatorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  passingScore?: Prisma.IntFieldUpdateOperationsInput | number
+  passingPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumAssessmentStatusFieldUpdateOperationsInput | $Enums.AssessmentStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1231,9 +1313,11 @@ export type AssessmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   title?: boolean
   slug?: boolean
   description?: boolean
+  thumbnailUrl?: boolean
+  thumbnailKey?: boolean
   duration?: boolean
   price?: boolean
-  passingScore?: boolean
+  passingPercentage?: boolean
   status?: boolean
   publishedAt?: boolean
   deletedAt?: boolean
@@ -1254,9 +1338,11 @@ export type AssessmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   title?: boolean
   slug?: boolean
   description?: boolean
+  thumbnailUrl?: boolean
+  thumbnailKey?: boolean
   duration?: boolean
   price?: boolean
-  passingScore?: boolean
+  passingPercentage?: boolean
   status?: boolean
   publishedAt?: boolean
   deletedAt?: boolean
@@ -1273,9 +1359,11 @@ export type AssessmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   title?: boolean
   slug?: boolean
   description?: boolean
+  thumbnailUrl?: boolean
+  thumbnailKey?: boolean
   duration?: boolean
   price?: boolean
-  passingScore?: boolean
+  passingPercentage?: boolean
   status?: boolean
   publishedAt?: boolean
   deletedAt?: boolean
@@ -1292,9 +1380,11 @@ export type AssessmentSelectScalar = {
   title?: boolean
   slug?: boolean
   description?: boolean
+  thumbnailUrl?: boolean
+  thumbnailKey?: boolean
   duration?: boolean
   price?: boolean
-  passingScore?: boolean
+  passingPercentage?: boolean
   status?: boolean
   publishedAt?: boolean
   deletedAt?: boolean
@@ -1304,7 +1394,7 @@ export type AssessmentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssessmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "slug" | "description" | "duration" | "price" | "passingScore" | "status" | "publishedAt" | "deletedAt" | "questions" | "answers" | "createdAt" | "updatedAt", ExtArgs["result"]["assessment"]>
+export type AssessmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "slug" | "description" | "thumbnailUrl" | "thumbnailKey" | "duration" | "price" | "passingPercentage" | "status" | "publishedAt" | "deletedAt" | "questions" | "answers" | "createdAt" | "updatedAt", ExtArgs["result"]["assessment"]>
 export type AssessmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.Assessment$attemptsArgs<ExtArgs>
@@ -1333,9 +1423,11 @@ export type $AssessmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     title: string
     slug: string
     description: string | null
+    thumbnailUrl: string | null
+    thumbnailKey: string | null
     duration: number
     price: runtime.Decimal
-    passingScore: number
+    passingPercentage: number
     status: $Enums.AssessmentStatus
     publishedAt: Date | null
     deletedAt: Date | null
@@ -1775,9 +1867,11 @@ export interface AssessmentFieldRefs {
   readonly title: Prisma.FieldRef<"Assessment", 'String'>
   readonly slug: Prisma.FieldRef<"Assessment", 'String'>
   readonly description: Prisma.FieldRef<"Assessment", 'String'>
+  readonly thumbnailUrl: Prisma.FieldRef<"Assessment", 'String'>
+  readonly thumbnailKey: Prisma.FieldRef<"Assessment", 'String'>
   readonly duration: Prisma.FieldRef<"Assessment", 'Int'>
   readonly price: Prisma.FieldRef<"Assessment", 'Decimal'>
-  readonly passingScore: Prisma.FieldRef<"Assessment", 'Int'>
+  readonly passingPercentage: Prisma.FieldRef<"Assessment", 'Int'>
   readonly status: Prisma.FieldRef<"Assessment", 'AssessmentStatus'>
   readonly publishedAt: Prisma.FieldRef<"Assessment", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Assessment", 'DateTime'>

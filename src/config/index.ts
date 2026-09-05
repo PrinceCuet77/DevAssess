@@ -30,5 +30,6 @@ export default {
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
   aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
   aws_s3_avatar_bucket: process.env.AWS_S3_AVATAR_BUCKET,
-  aws_s3_avatar_url_ttl_seconds: process.env.AWS_S3_AVATAR_URL_TTL_SECONDS,
+  aws_s3_assessment_bucket: process.env.AWS_S3_ASSESSMENT_BUCKET,
+  aws_s3_url_ttl_seconds: process.env.AWS_S3_URL_TTL_SECONDS,
 };

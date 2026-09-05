@@ -3,14 +3,16 @@ model Assessment {
   creatorId String
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: Restrict)
 
-  title       String
-  slug        String  @unique
-  description String?
+  title        String
+  slug         String  @unique
+  description  String?
+  thumbnailUrl String?
+  thumbnailKey String?
 
-  duration     Int // minutes
-  price        Decimal   @db.Decimal(10, 2)
-  passingScore Int
-  attempts     Attempt[]
+  duration          Int // minutes
+  price             Decimal   @db.Decimal(10, 2)
+  passingPercentage Int
+  attempts          Attempt[]
 
   status AssessmentStatus @default(DRAFT)
 
@@ -18,7 +20,7 @@ model Assessment {
   deletedAt   DateTime?
 
   questions Json
-  answers Json
+  answers   Json
 
   purchases Purchase[]
   reviews   Review[]
