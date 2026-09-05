@@ -2,35 +2,15 @@ import crypto from 'crypto';
 import httpStatus from 'http-status';
 import config from '../../config';
 import { ApiError, NotFoundError } from '../../errors/ApiError';
-import { Prisma, Role } from '../../../generated/prisma/client';
+import { AssessmentStatus, Prisma } from '../../../generated/prisma/client';
 import { prisma } from '../../lib/prisma';
 import { buildS3PublicUrl, generatePresignedUploadUrl } from '../../lib/s3';
 import {
   ICreateAssessmentPayload,
   IGetMyAssessmentsQuery,
   IPresignThumbnailUploadPayload,
+  IUpdateAssessmentPayload,
 } from './evaluator.interfaces';
-
-const generateSlug = (title: string) =>
-  title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-+|-+$)/g, '');
-
-const buildUniqueSlug = async (title: string) => {
-  const baseSlug = generateSlug(title) || 'assessment';
-
-  const existing = await prisma.assessment.findUnique({
-    where: { slug: baseSlug },
-  });
-
-  if (!existing) {
-    return baseSlug;
-  }
-
-  return `${baseSlug}-${crypto.randomBytes(3).toString('hex')}`;
-};
 
 const presignThumbnailUpload = async (
   creatorId: string,
@@ -90,13 +70,10 @@ const createAssessmentInDB = async (
     );
   }
 
-  const slug = await buildUniqueSlug(payload.title);
-
   const assessment = await prisma.assessment.create({
     data: {
       creatorId,
       title: payload.title,
-      slug,
       description: payload.description,
       duration: payload.duration,
       price: payload.price,
@@ -210,9 +187,77 @@ const getSingleAssessmentById = async (
   return assessment;
 };
 
+const updateSingleAssessmentById = async (
+  userId: string,
+  assessmentId: string,
+  payload: IUpdateAssessmentPayload,
+) => {
+  const assessment = await prisma.assessment.findUnique({
+    where: { id: assessmentId, creatorId: userId },
+  });
+
+  if (!assessment) {
+    throw new NotFoundError('Assessment not found or access denied');
+  }
+
+  const { thumbnailKey, questions, answer, status, ...rest } = payload;
+
+  const data: Prisma.AssessmentUpdateInput = {
+    ...rest,
+  };
+
+  if (questions !== undefined) {
+    data.questions = questions as unknown as Prisma.InputJsonValue;
+  }
+  if (answer !== undefined) {
+    data.answers = answer as unknown as Prisma.InputJsonValue;
+  }
+
+  if (status !== undefined) {
+    data.status = status;
+
+    if (status === AssessmentStatus.PUBLISHED) {
+      data.publishedAt = new Date();
+    }
+  }
+
+  if (thumbnailKey !== undefined) {
+    if (!config.aws_s3_assessment_bucket) {
+      throw new ApiError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Assessment storage bucket is not configured',
+      );
+    }
+
+    if (!thumbnailKey.startsWith(`${userId}/assessments/`)) {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        'Thumbnail key does not belong to this account',
+      );
+    }
+
+    data.thumbnailKey = thumbnailKey;
+    data.thumbnailUrl = buildS3PublicUrl(
+      config.aws_s3_assessment_bucket,
+      thumbnailKey,
+    );
+  }
+
+  const updatedAssessment = await prisma.assessment.update({
+    where: { id: assessmentId },
+    data,
+  });
+
+  const { thumbnailKey: _thumbnailKey, ...assessmentResponse } =
+    updatedAssessment;
+
+  return assessmentResponse;
+};
+
 export const EvaluatorServices = {
   presignThumbnailUpload,
   createAssessmentInDB,
   getMyCreatedAssessments,
   getSingleAssessmentById,
+  updateSingleAssessmentById,
 };

@@ -984,7 +984,6 @@ export const AssessmentScalarFieldEnum = {
   id: 'id',
   creatorId: 'creatorId',
   title: 'title',
-  slug: 'slug',
   description: 'description',
   thumbnailUrl: 'thumbnailUrl',
   thumbnailKey: 'thumbnailKey',

@@ -6,6 +6,7 @@ import {
   ICreateAssessmentPayload,
   IGetMyAssessmentsQuery,
   IPresignThumbnailUploadPayload,
+  IUpdateAssessmentPayload,
 } from './evaluator.interfaces';
 import { EvaluatorServices } from './evaluator.services';
 import { strict } from 'node:assert';
@@ -74,9 +75,29 @@ const getSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
   },
 );
 
+const updateSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const providerId = req.user?.id as string;
+    const assessmentId = req.params.assessmentId as string;
+    const assessment = await EvaluatorServices.updateSingleAssessmentById(
+      providerId,
+      assessmentId,
+      req.body as IUpdateAssessmentPayload,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment is updated successfully',
+      data: assessment,
+    });
+  },
+);
+
 export const EvaluatorControllers = {
   presignThumbnailUpload,
   createAssessment,
   getMyCreatedAssessments,
   getSingleAssessmentByIdForEvaluatorOrAdmin,
+  updateSingleAssessmentByIdForEvaluatorOrAdmin,
 };

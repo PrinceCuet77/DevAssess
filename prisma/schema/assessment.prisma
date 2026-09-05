@@ -4,7 +4,6 @@ model Assessment {
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: Restrict)
 
   title        String
-  slug         String   @unique
   description  String?
   thumbnailUrl String?
   thumbnailKey String?

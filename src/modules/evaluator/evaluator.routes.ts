@@ -9,6 +9,7 @@ import {
   getAssessmentByIdParamSchema,
   getMyAssessmentsSchema,
   presignThumbnailUploadSchema,
+  updateAssessmentSchema,
 } from './evaluator.validators';
 
 const router = Router();
@@ -39,6 +40,14 @@ router.get(
   auth(Role.EVALUATOR, Role.ADMIN),
   validate(getAssessmentByIdParamSchema, 'params'),
   EvaluatorControllers.getSingleAssessmentByIdForEvaluatorOrAdmin,
+);
+
+router.patch(
+  '/assessments/:assessmentId',
+  auth(Role.EVALUATOR),
+  validate(getAssessmentByIdParamSchema, 'params'),
+  validate(updateAssessmentSchema),
+  EvaluatorControllers.updateSingleAssessmentByIdForEvaluatorOrAdmin,
 );
 
 export const EvaluatorRoutes = router;

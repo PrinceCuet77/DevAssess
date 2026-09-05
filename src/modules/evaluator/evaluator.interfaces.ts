@@ -29,6 +29,24 @@ export interface ICreateAssessmentPayload {
   tags?: string[];
 }
 
+export type IUpdatableAssessmentStatus = Extract<
+  AssessmentStatus,
+  'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+>;
+
+export interface IUpdateAssessmentPayload {
+  title?: string;
+  description?: string;
+  duration?: number;
+  price?: number;
+  passingPercentage?: number;
+  questions?: IQuestion[];
+  answer?: IAnswer[];
+  thumbnailKey?: string;
+  tags?: string[];
+  status?: IUpdatableAssessmentStatus;
+}
+
 export interface IPresignThumbnailUploadPayload {
   fileName: string;
   fileType: string;

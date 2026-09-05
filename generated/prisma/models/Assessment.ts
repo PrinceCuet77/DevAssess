@@ -42,7 +42,6 @@ export type AssessmentMinAggregateOutputType = {
   id: string | null
   creatorId: string | null
   title: string | null
-  slug: string | null
   description: string | null
   thumbnailUrl: string | null
   thumbnailKey: string | null
@@ -60,7 +59,6 @@ export type AssessmentMaxAggregateOutputType = {
   id: string | null
   creatorId: string | null
   title: string | null
-  slug: string | null
   description: string | null
   thumbnailUrl: string | null
   thumbnailKey: string | null
@@ -78,7 +76,6 @@ export type AssessmentCountAggregateOutputType = {
   id: number
   creatorId: number
   title: number
-  slug: number
   description: number
   thumbnailUrl: number
   thumbnailKey: number
@@ -113,7 +110,6 @@ export type AssessmentMinAggregateInputType = {
   id?: true
   creatorId?: true
   title?: true
-  slug?: true
   description?: true
   thumbnailUrl?: true
   thumbnailKey?: true
@@ -131,7 +127,6 @@ export type AssessmentMaxAggregateInputType = {
   id?: true
   creatorId?: true
   title?: true
-  slug?: true
   description?: true
   thumbnailUrl?: true
   thumbnailKey?: true
@@ -149,7 +144,6 @@ export type AssessmentCountAggregateInputType = {
   id?: true
   creatorId?: true
   title?: true
-  slug?: true
   description?: true
   thumbnailUrl?: true
   thumbnailKey?: true
@@ -257,7 +251,6 @@ export type AssessmentGroupByOutputType = {
   id: string
   creatorId: string
   title: string
-  slug: string
   description: string | null
   thumbnailUrl: string | null
   thumbnailKey: string | null
@@ -301,7 +294,6 @@ export type AssessmentWhereInput = {
   id?: Prisma.StringFilter<"Assessment"> | string
   creatorId?: Prisma.StringFilter<"Assessment"> | string
   title?: Prisma.StringFilter<"Assessment"> | string
-  slug?: Prisma.StringFilter<"Assessment"> | string
   description?: Prisma.StringNullableFilter<"Assessment"> | string | null
   thumbnailUrl?: Prisma.StringNullableFilter<"Assessment"> | string | null
   thumbnailKey?: Prisma.StringNullableFilter<"Assessment"> | string | null
@@ -326,7 +318,6 @@ export type AssessmentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailKey?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -349,7 +340,6 @@ export type AssessmentOrderByWithRelationInput = {
 
 export type AssessmentWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slug?: string
   AND?: Prisma.AssessmentWhereInput | Prisma.AssessmentWhereInput[]
   OR?: Prisma.AssessmentWhereInput[]
   NOT?: Prisma.AssessmentWhereInput | Prisma.AssessmentWhereInput[]
@@ -373,13 +363,12 @@ export type AssessmentWhereUniqueInput = Prisma.AtLeast<{
   attempts?: Prisma.AttemptListRelationFilter
   purchases?: Prisma.PurchaseListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
-}, "id" | "slug">
+}, "id">
 
 export type AssessmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailKey?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -408,7 +397,6 @@ export type AssessmentScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
   creatorId?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
   title?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
-  slug?: Prisma.StringWithAggregatesFilter<"Assessment"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
   thumbnailUrl?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
   thumbnailKey?: Prisma.StringNullableWithAggregatesFilter<"Assessment"> | string | null
@@ -428,7 +416,6 @@ export type AssessmentScalarWhereWithAggregatesInput = {
 export type AssessmentCreateInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -453,7 +440,6 @@ export type AssessmentUncheckedCreateInput = {
   id?: string
   creatorId: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -476,7 +462,6 @@ export type AssessmentUncheckedCreateInput = {
 export type AssessmentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -501,7 +486,6 @@ export type AssessmentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -525,7 +509,6 @@ export type AssessmentCreateManyInput = {
   id?: string
   creatorId: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -545,7 +528,6 @@ export type AssessmentCreateManyInput = {
 export type AssessmentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -566,7 +548,6 @@ export type AssessmentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -595,7 +576,6 @@ export type AssessmentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
   thumbnailKey?: Prisma.SortOrder
@@ -622,7 +602,6 @@ export type AssessmentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
   thumbnailKey?: Prisma.SortOrder
@@ -640,7 +619,6 @@ export type AssessmentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   creatorId?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
   thumbnailKey?: Prisma.SortOrder
@@ -807,7 +785,6 @@ export type AssessmentUncheckedUpdateManyWithoutCreatorNestedInput = {
 export type AssessmentCreateWithoutAttemptsInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -831,7 +808,6 @@ export type AssessmentUncheckedCreateWithoutAttemptsInput = {
   id?: string
   creatorId: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -869,7 +845,6 @@ export type AssessmentUpdateToOneWithWhereWithoutAttemptsInput = {
 export type AssessmentUpdateWithoutAttemptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -893,7 +868,6 @@ export type AssessmentUncheckedUpdateWithoutAttemptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -915,7 +889,6 @@ export type AssessmentUncheckedUpdateWithoutAttemptsInput = {
 export type AssessmentCreateWithoutPurchasesInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -939,7 +912,6 @@ export type AssessmentUncheckedCreateWithoutPurchasesInput = {
   id?: string
   creatorId: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -977,7 +949,6 @@ export type AssessmentUpdateToOneWithWhereWithoutPurchasesInput = {
 export type AssessmentUpdateWithoutPurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1001,7 +972,6 @@ export type AssessmentUncheckedUpdateWithoutPurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1023,7 +993,6 @@ export type AssessmentUncheckedUpdateWithoutPurchasesInput = {
 export type AssessmentCreateWithoutReviewsInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -1047,7 +1016,6 @@ export type AssessmentUncheckedCreateWithoutReviewsInput = {
   id?: string
   creatorId: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -1085,7 +1053,6 @@ export type AssessmentUpdateToOneWithWhereWithoutReviewsInput = {
 export type AssessmentUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1109,7 +1076,6 @@ export type AssessmentUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1131,7 +1097,6 @@ export type AssessmentUncheckedUpdateWithoutReviewsInput = {
 export type AssessmentCreateWithoutCreatorInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -1154,7 +1119,6 @@ export type AssessmentCreateWithoutCreatorInput = {
 export type AssessmentUncheckedCreateWithoutCreatorInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -1207,7 +1171,6 @@ export type AssessmentScalarWhereInput = {
   id?: Prisma.StringFilter<"Assessment"> | string
   creatorId?: Prisma.StringFilter<"Assessment"> | string
   title?: Prisma.StringFilter<"Assessment"> | string
-  slug?: Prisma.StringFilter<"Assessment"> | string
   description?: Prisma.StringNullableFilter<"Assessment"> | string | null
   thumbnailUrl?: Prisma.StringNullableFilter<"Assessment"> | string | null
   thumbnailKey?: Prisma.StringNullableFilter<"Assessment"> | string | null
@@ -1227,7 +1190,6 @@ export type AssessmentScalarWhereInput = {
 export type AssessmentCreateManyCreatorInput = {
   id?: string
   title: string
-  slug: string
   description?: string | null
   thumbnailUrl?: string | null
   thumbnailKey?: string | null
@@ -1247,7 +1209,6 @@ export type AssessmentCreateManyCreatorInput = {
 export type AssessmentUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1270,7 +1231,6 @@ export type AssessmentUpdateWithoutCreatorInput = {
 export type AssessmentUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1293,7 +1253,6 @@ export type AssessmentUncheckedUpdateWithoutCreatorInput = {
 export type AssessmentUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1363,7 +1322,6 @@ export type AssessmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   creatorId?: boolean
   title?: boolean
-  slug?: boolean
   description?: boolean
   thumbnailUrl?: boolean
   thumbnailKey?: boolean
@@ -1389,7 +1347,6 @@ export type AssessmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   creatorId?: boolean
   title?: boolean
-  slug?: boolean
   description?: boolean
   thumbnailUrl?: boolean
   thumbnailKey?: boolean
@@ -1411,7 +1368,6 @@ export type AssessmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   creatorId?: boolean
   title?: boolean
-  slug?: boolean
   description?: boolean
   thumbnailUrl?: boolean
   thumbnailKey?: boolean
@@ -1433,7 +1389,6 @@ export type AssessmentSelectScalar = {
   id?: boolean
   creatorId?: boolean
   title?: boolean
-  slug?: boolean
   description?: boolean
   thumbnailUrl?: boolean
   thumbnailKey?: boolean
@@ -1450,7 +1405,7 @@ export type AssessmentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssessmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "slug" | "description" | "thumbnailUrl" | "thumbnailKey" | "tags" | "duration" | "price" | "passingPercentage" | "status" | "publishedAt" | "deletedAt" | "questions" | "answers" | "createdAt" | "updatedAt", ExtArgs["result"]["assessment"]>
+export type AssessmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "creatorId" | "title" | "description" | "thumbnailUrl" | "thumbnailKey" | "tags" | "duration" | "price" | "passingPercentage" | "status" | "publishedAt" | "deletedAt" | "questions" | "answers" | "createdAt" | "updatedAt", ExtArgs["result"]["assessment"]>
 export type AssessmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.Assessment$attemptsArgs<ExtArgs>
@@ -1477,7 +1432,6 @@ export type $AssessmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     creatorId: string
     title: string
-    slug: string
     description: string | null
     thumbnailUrl: string | null
     thumbnailKey: string | null
@@ -1922,7 +1876,6 @@ export interface AssessmentFieldRefs {
   readonly id: Prisma.FieldRef<"Assessment", 'String'>
   readonly creatorId: Prisma.FieldRef<"Assessment", 'String'>
   readonly title: Prisma.FieldRef<"Assessment", 'String'>
-  readonly slug: Prisma.FieldRef<"Assessment", 'String'>
   readonly description: Prisma.FieldRef<"Assessment", 'String'>
   readonly thumbnailUrl: Prisma.FieldRef<"Assessment", 'String'>
   readonly thumbnailKey: Prisma.FieldRef<"Assessment", 'String'>
