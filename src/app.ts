@@ -11,6 +11,7 @@ import { evaluatorRoutes } from './modules/evaluator/evaluator.routes';
 import { reviewsRoutes } from './modules/reviews/reviews.routes';
 import { assessmentsRoutes } from './modules/assessments/assessments.routes';
 import { paymentRoutes } from './modules/payments/payments.routes';
+import { purchasesRoutes } from './modules/purchases/purchases.routes';
 
 const app: Application = express();
 
@@ -31,6 +32,7 @@ app.use('/api/v1/evaluator', evaluatorRoutes);
 app.use('/api/v1/reviews', reviewsRoutes);
 app.use('/api/v1/assessments', assessmentsRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/purchases', purchasesRoutes);
 
 app.use(notFound);
 
