@@ -6,6 +6,7 @@ import { validate } from '../../middlewares/validator';
 import { EvaluatorControllers } from './evaluator.controllers';
 import {
   createAssessmentSchema,
+  getAssessmentByIdParamSchema,
   getMyAssessmentsSchema,
   presignThumbnailUploadSchema,
 } from './evaluator.validators';
@@ -31,6 +32,13 @@ router.get(
   auth(Role.EVALUATOR),
   validate(getMyAssessmentsSchema, 'query'),
   EvaluatorControllers.getMyCreatedAssessments,
+);
+
+router.get(
+  '/assessments/:assessmentId',
+  auth(Role.EVALUATOR, Role.ADMIN),
+  validate(getAssessmentByIdParamSchema, 'params'),
+  EvaluatorControllers.getSingleAssessmentByIdForEvaluatorOrAdmin,
 );
 
 export const EvaluatorRoutes = router;

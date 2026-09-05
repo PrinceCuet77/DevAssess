@@ -8,6 +8,7 @@ import {
   IPresignThumbnailUploadPayload,
 } from './evaluator.interfaces';
 import { EvaluatorServices } from './evaluator.services';
+import { strict } from 'node:assert';
 
 const presignThumbnailUpload = catchAsync(
   async (req: Request, res: Response) => {
@@ -57,8 +58,25 @@ const getMyCreatedAssessments = catchAsync(
   },
 );
 
+const getSingleAssessmentByIdForEvaluatorOrAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await EvaluatorServices.getSingleAssessmentById(
+      req.user!.id,
+      req.params.assessmentId as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment retrieved successfully',
+      data: result,
+    });
+  },
+);
+
 export const EvaluatorControllers = {
   presignThumbnailUpload,
   createAssessment,
   getMyCreatedAssessments,
+  getSingleAssessmentByIdForEvaluatorOrAdmin,
 };

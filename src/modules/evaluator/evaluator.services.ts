@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 import httpStatus from 'http-status';
 import config from '../../config';
-import { ApiError } from '../../errors/ApiError';
-import { Prisma } from '../../../generated/prisma/client';
+import { ApiError, NotFoundError } from '../../errors/ApiError';
+import { Prisma, Role } from '../../../generated/prisma/client';
 import { prisma } from '../../lib/prisma';
 import { buildS3PublicUrl, generatePresignedUploadUrl } from '../../lib/s3';
 import {
@@ -185,8 +185,34 @@ const getMyCreatedAssessments = async (
   };
 };
 
+const getSingleAssessmentById = async (
+  userId: string,
+  assessmentId: string,
+) => {
+  const assessment = await prisma.assessment.findUnique({
+    where: { id: assessmentId, creatorId: userId },
+    include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      reviews: true,
+    },
+  });
+
+  if (!assessment) {
+    throw new NotFoundError('Assessment not found or access denied');
+  }
+
+  return assessment;
+};
+
 export const EvaluatorServices = {
   presignThumbnailUpload,
   createAssessmentInDB,
   getMyCreatedAssessments,
+  getSingleAssessmentById,
 };

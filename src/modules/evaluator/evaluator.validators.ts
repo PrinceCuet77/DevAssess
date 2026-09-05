@@ -16,6 +16,10 @@ export const getMyAssessmentsSchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
+export const getAssessmentByIdParamSchema = z.object({
+  assessmentId: z.string().uuid('Invalid assessment id'),
+});
+
 export const presignThumbnailUploadSchema = z.object({
   fileName: z.string().trim().min(1, 'File name is required'),
   fileType: z
