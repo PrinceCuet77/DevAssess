@@ -1,3 +1,5 @@
+import { AssessmentStatus } from '../../../generated/prisma/client';
+
 export interface IOption {
   id: string;
   text: string;
@@ -24,9 +26,22 @@ export interface ICreateAssessmentPayload {
   questions: IQuestion[];
   answer: IAnswer[];
   thumbnailKey?: string;
+  tags?: string[];
 }
 
 export interface IPresignThumbnailUploadPayload {
   fileName: string;
   fileType: string;
+}
+
+export interface IGetMyAssessmentsQuery {
+  minPrice?: number;
+  maxPrice?: number;
+  duration?: number;
+  page: number;
+  limit: number;
+  status?: AssessmentStatus;
+  search?: string;
+  sortBy?: 'title' | 'price' | 'createdAt' | 'duration';
+  sortOrder?: 'asc' | 'desc';
 }

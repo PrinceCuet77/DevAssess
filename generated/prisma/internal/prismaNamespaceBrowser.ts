@@ -84,6 +84,7 @@ export const AssessmentScalarFieldEnum = {
   description: 'description',
   thumbnailUrl: 'thumbnailUrl',
   thumbnailKey: 'thumbnailKey',
+  tags: 'tags',
   duration: 'duration',
   price: 'price',
   passingPercentage: 'passingPercentage',
@@ -165,6 +166,8 @@ export const ReviewScalarFieldEnum = {
   comment: 'comment',
   developerId: 'developerId',
   assessmentId: 'assessmentId',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

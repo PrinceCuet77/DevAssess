@@ -1,4 +1,20 @@
 import { z } from 'zod';
+import { AssessmentStatus } from '../../../generated/prisma/client';
+
+export const getMyAssessmentsSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  limit: z.coerce.number().int().positive().max(100).optional().default(10),
+  status: z.nativeEnum(AssessmentStatus).optional(),
+  search: z.string().trim().min(1).optional(),
+  duration: z.coerce.number().int().positive().optional(),
+  minPrice: z.coerce.number().nonnegative().optional(),
+  maxPrice: z.coerce.number().nonnegative().optional(),
+  sortBy: z
+    .enum(['title', 'price', 'createdAt', 'duration'])
+    .optional()
+    .default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+});
 
 export const presignThumbnailUploadSchema = z.object({
   fileName: z.string().trim().min(1, 'File name is required'),
@@ -40,6 +56,22 @@ export const createAssessmentSchema = z
       .min(1, 'Passing percentage must be at least 1')
       .max(100, 'Passing percentage cannot exceed 100'),
     thumbnailKey: z.string().trim().min(1).optional(),
+    tags: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) =>
+        value
+          ? Array.from(
+              new Set(
+                value
+                  .split(',')
+                  .map((tag) => tag.trim().toLowerCase())
+                  .filter((tag) => tag.length > 0),
+              ),
+            )
+          : [],
+      ),
     questions: z
       .array(questionSchema)
       .min(1, 'At least 1 question is required'),

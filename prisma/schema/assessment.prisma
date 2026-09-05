@@ -4,10 +4,11 @@ model Assessment {
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: Restrict)
 
   title        String
-  slug         String  @unique
+  slug         String   @unique
   description  String?
   thumbnailUrl String?
   thumbnailKey String?
+  tags         String[]
 
   duration          Int // minutes
   price             Decimal   @db.Decimal(10, 2)

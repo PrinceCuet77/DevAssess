@@ -7,6 +7,7 @@ import { prisma } from '../../lib/prisma';
 import { buildS3PublicUrl, generatePresignedUploadUrl } from '../../lib/s3';
 import {
   ICreateAssessmentPayload,
+  IGetMyAssessmentsQuery,
   IPresignThumbnailUploadPayload,
 } from './evaluator.interfaces';
 
@@ -43,8 +44,7 @@ const presignThumbnailUpload = async (
   }
 
   const key = `${creatorId}/assessments/${crypto.randomUUID()}-${payload.fileName.replace(/\s+/g, '-')}`;
-  const expiresInSeconds =
-    Number(config.aws_s3_url_ttl_seconds) || 300;
+  const expiresInSeconds = Number(config.aws_s3_url_ttl_seconds) || 300;
 
   const uploadUrl = await generatePresignedUploadUrl({
     bucket: config.aws_s3_assessment_bucket,
@@ -105,13 +105,88 @@ const createAssessmentInDB = async (
       answers: payload.answer as unknown as Prisma.InputJsonValue,
       thumbnailUrl,
       thumbnailKey,
+      tags: payload.tags ?? [],
     },
   });
 
-  return assessment;
+  const { thumbnailKey: _thumbnailKey, ...assessmentResponse } = assessment;
+
+  return assessmentResponse;
+};
+
+const getMyCreatedAssessments = async (
+  creatorId: string,
+  query: IGetMyAssessmentsQuery,
+) => {
+  const {
+    minPrice,
+    maxPrice,
+    duration,
+    status,
+    search,
+    page = 1,
+    limit = 10,
+    sortBy = 'createdAt',
+    sortOrder = 'desc',
+  } = query;
+
+  const where: Prisma.AssessmentWhereInput = {
+    creatorId,
+  };
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (duration !== undefined) {
+    where.duration = Number(duration);
+  }
+
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    where.price = {};
+    if (minPrice !== undefined) {
+      where.price.gte = Number(minPrice);
+    }
+    if (maxPrice !== undefined) {
+      where.price.lte = Number(maxPrice);
+    }
+  }
+
+  if (search) {
+    where.OR = [
+      { title: { contains: String(search), mode: 'insensitive' } },
+      { description: { contains: String(search), mode: 'insensitive' } },
+      { tags: { hasSome: [String(search).trim().toLowerCase()] } },
+    ];
+  }
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const [assessments, total] = await Promise.all([
+    prisma.assessment.findMany({
+      where,
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+      skip,
+      take: Number(limit),
+    }),
+    prisma.assessment.count({ where }),
+  ]);
+
+  return {
+    assessments,
+    meta: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+    },
+  };
 };
 
 export const EvaluatorServices = {
   presignThumbnailUpload,
   createAssessmentInDB,
+  getMyCreatedAssessments,
 };
