@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AuthControllers } from './auth.controllers';
 import { validate } from '../../middlewares/validator';
-import { AuthValidators } from './auth.validator';
+import { AuthValidators } from './auth.validators';
 import passport from 'passport';
 
 const router = Router();

@@ -4,6 +4,7 @@ import express, { Application, Request, Response } from 'express';
 import { notFound } from './middlewares/notFound';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
 import { AuthRoutes } from './modules/auth/auth.routes';
+import { UserRoutes } from './modules/user/user.routes';
 import passport from 'passport';
 import './config/passport';
 
@@ -21,6 +22,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/api/v1/auth', AuthRoutes);
+app.use('/api/v1/users', UserRoutes);
 
 app.use(notFound);
 
