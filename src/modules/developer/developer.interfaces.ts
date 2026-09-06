@@ -16,3 +16,20 @@ export interface IGetAllAttemptsQuery {
   sortBy?: 'createdAt' | 'score';
   sortOrder?: 'asc' | 'desc';
 }
+
+export interface IOption {
+  id: string;
+  text: string;
+}
+
+export interface IQuestion {
+  id: string;
+  question: string;
+  options: IOption[];
+  marks: number;
+}
+
+export interface IAnswerKey {
+  questionId: string;
+  answer: string;
+}

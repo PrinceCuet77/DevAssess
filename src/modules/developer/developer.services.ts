@@ -7,26 +7,11 @@ import {
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../errors/ApiError';
 import { prisma } from '../../lib/prisma';
 import {
+  IAnswerKey,
   IEvaluateAssessmentPayload,
   IGetAllAttemptsQuery,
+  IQuestion,
 } from './developer.interfaces';
-
-interface IOption {
-  id: string;
-  text: string;
-}
-
-interface IQuestion {
-  id: string;
-  question: string;
-  options: IOption[];
-  marks: number;
-}
-
-interface IAnswerKey {
-  questionId: string;
-  answer: string;
-}
 
 const assessmentDetailsSelect = {
   id: true,
@@ -51,7 +36,7 @@ const assessmentDetailsSelect = {
 const attemptHistorySelect = {
   id: true,
   score: true,
-  passed: true,
+  isPassed: true,
   status: true,
   startedAt: true,
   endedAt: true,
