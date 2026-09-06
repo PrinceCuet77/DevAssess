@@ -1,12 +1,11 @@
 model Purchase {
-  id     String         @id @default(uuid())
-  price  Decimal        @db.Decimal(10, 2)
+  id    String  @id @default(uuid())
+  price Decimal @db.Decimal(10, 2)
 
   customerId String
   customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  assessmentId String
-  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  items PurchaseItem[]
 
   payments Payment[]
 
@@ -14,6 +13,5 @@ model Purchase {
   updatedAt DateTime @updatedAt
 
   @@index([customerId])
-  @@index([assessmentId])
   @@map("purchases")
 }

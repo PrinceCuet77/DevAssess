@@ -1,5 +1,5 @@
 export interface ICreateReviewPayload {
-  purchaseId: string;
+  assessmentId: string;
   rating: number;
   comment: string;
 }

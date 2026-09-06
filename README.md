@@ -276,7 +276,7 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 
 | Method | Path                     | Description                                                                                                                          |
 | ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/`                      | `tags` (comma-separated), `minPrice`, `maxPrice`, `search`, `page`, `limit`, `sortBy=title\|price\|createdAt\|duration`, `sortOrder` |
+| GET    | `/`                      | `tags` (repeatable: `?tags=node&tags=react`), `minPrice`, `maxPrice`, `search`, `page`, `limit`, `sortBy=title\|price\|createdAt\|duration`, `sortOrder` |
 | GET    | `/:assessmentId`         | Single assessment — **`answers` omitted**                                                                                            |
 | GET    | `/:assessmentId/reviews` | `page`, `limit`, `sortBy=createdAt\|rating`, `sortOrder`                                                                             |
 
@@ -286,7 +286,7 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 | ------ | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/dashboard`                    | Evaluator overview                                                                                                                                                     |
 | POST   | `/assessment/thumbnail/presign` | Body `{ fileName, fileType }` (image mime)                                                                                                                             |
-| POST   | `/assessment`                   | Create — `title`, `duration`, `price`, `passingPercentage` (1–100), `questions[]`, `answer[]`, optional `description`, `thumbnailKey`, `tags` (comma-separated string) |
+| POST   | `/assessment`                   | Create — `title`, `duration`, `price`, `passingPercentage` (1–100), `questions[]`, `answer[]`, optional `description`, `thumbnailKey`, `tags` (array of strings) |
 | GET    | `/assessments`                  | Own list — `status`, `search`, `duration`, `minPrice`, `maxPrice`, pagination, sorting                                                                                 |
 | GET    | `/assessments/:assessmentId`    | Full detail incl. answers — `EVALUATOR` or `ADMIN`                                                                                                                     |
 | PATCH  | `/assessments/:assessmentId`    | Partial update; `status` may be set to `DRAFT`, `PUBLISHED`, or `ARCHIVED`                                                                                             |

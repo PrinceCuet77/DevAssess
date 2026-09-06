@@ -1,0 +1,17 @@
+model PurchaseItem {
+  id    String  @id @default(uuid())
+  price Decimal @db.Decimal(10, 2) // assessment price captured at purchase time
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([purchaseId, assessmentId])
+  @@index([assessmentId])
+  @@map("purchase_items")
+}

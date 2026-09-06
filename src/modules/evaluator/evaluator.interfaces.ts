@@ -79,5 +79,6 @@ export interface IGetMyAssessmentPurchasesQuery {
 }
 
 export interface IUpdateMyAssessmentPurchasePayload {
+  assessmentId: string;
   price: number;
 }

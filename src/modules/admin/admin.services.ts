@@ -52,20 +52,42 @@ const assessmentAdminSelect = {
     select: { id: true, name: true, email: true, status: true },
   },
   _count: {
-    select: { purchases: true, reviews: true, attempts: true },
+    select: { purchaseItems: true, reviews: true, attempts: true },
   },
 } satisfies Prisma.AssessmentSelect;
 
+const serializeAdminAssessment = <
+  T extends {
+    _count: { purchaseItems: number; reviews: number; attempts: number };
+  },
+>({
+  _count,
+  ...assessment
+}: T) => ({
+  ...assessment,
+  _count: {
+    purchases: _count.purchaseItems,
+    reviews: _count.reviews,
+    attempts: _count.attempts,
+  },
+});
+
 const purchaseAdminInclude = {
   customer: { select: { id: true, name: true, email: true } },
-  assessment: {
+  items: {
     select: {
-      id: true,
-      title: true,
       price: true,
-      status: true,
-      creator: { select: { id: true, name: true, email: true } },
+      assessment: {
+        select: {
+          id: true,
+          title: true,
+          price: true,
+          status: true,
+          creator: { select: { id: true, name: true, email: true } },
+        },
+      },
     },
+    orderBy: { createdAt: 'asc' },
   },
   payments: {
     select: {
@@ -81,6 +103,16 @@ const purchaseAdminInclude = {
     orderBy: { createdAt: 'desc' },
   },
 } satisfies Prisma.PurchaseInclude;
+
+const serializeAdminPurchase = <
+  T extends { items: Array<{ assessment: unknown }> },
+>({
+  items,
+  ...purchase
+}: T) => ({
+  ...purchase,
+  assessments: items.map((item) => item.assessment),
+});
 
 const getAllUsers = async (query: IGetAllUsersQuery) => {
   const {
@@ -232,7 +264,7 @@ const getAllAssessments = async (query: IGetAllAssessmentsQuery) => {
   ]);
 
   return {
-    assessments,
+    assessments: assessments.map(serializeAdminAssessment),
     meta: {
       page: Number(page),
       limit: Number(limit),
@@ -260,16 +292,22 @@ const getAllPurchases = async (query: IGetAllPurchasesQuery) => {
     where.customerId = customerId;
   }
 
-  if (assessmentId) {
-    where.assessmentId = assessmentId;
-  }
-
   if (paymentStatus) {
     where.payments = { some: { status: paymentStatus } };
   }
 
+  const itemFilter: Prisma.PurchaseItemWhereInput = {};
+
+  if (assessmentId) {
+    itemFilter.assessmentId = assessmentId;
+  }
+
   if (search) {
-    where.assessment = { title: { contains: search, mode: 'insensitive' } };
+    itemFilter.assessment = { title: { contains: search, mode: 'insensitive' } };
+  }
+
+  if (Object.keys(itemFilter).length) {
+    where.items = { some: itemFilter };
   }
 
   const skip = (Number(page) - 1) * Number(limit);
@@ -286,7 +324,7 @@ const getAllPurchases = async (query: IGetAllPurchasesQuery) => {
   ]);
 
   return {
-    purchases,
+    purchases: purchases.map(serializeAdminPurchase),
     meta: {
       page: Number(page),
       limit: Number(limit),
@@ -371,7 +409,10 @@ const getDashboard = async () => {
         price: true,
         createdAt: true,
         customer: { select: { id: true, name: true, email: true } },
-        assessment: { select: { id: true, title: true } },
+        items: {
+          select: { assessment: { select: { id: true, title: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
         payments: {
           select: { status: true },
           orderBy: { createdAt: 'desc' },
@@ -407,7 +448,7 @@ const getDashboard = async () => {
     },
     recentUsers,
     recentAssessments,
-    recentPurchases,
+    recentPurchases: recentPurchases.map(serializeAdminPurchase),
   };
 };
 

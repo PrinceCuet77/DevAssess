@@ -9,7 +9,7 @@ export const paginationQuerySchema = z.object({
 });
 
 export const createReviewSchema = z.object({
-  purchaseId: z.string().min(1, 'Purchase ID is required'),
+  assessmentId: z.string().min(1, 'Assessment ID is required'),
   rating: z
     .number()
     .int('Rating must be an integer')

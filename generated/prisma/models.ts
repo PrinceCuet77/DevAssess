@@ -8,11 +8,12 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Assessment.ts'
-export type * from './models/Attempt.ts'
-export type * from './models/Auth.ts'
-export type * from './models/Payment.ts'
-export type * from './models/Purchase.ts'
-export type * from './models/Review.ts'
-export type * from './models/User.ts'
-export type * from './commonInputTypes.ts'
+export type * from './models/Assessment'
+export type * from './models/Attempt'
+export type * from './models/Auth'
+export type * from './models/Payment'
+export type * from './models/Purchase'
+export type * from './models/PurchaseItem'
+export type * from './models/Review'
+export type * from './models/User'
+export type * from './commonInputTypes'

@@ -49,10 +49,12 @@ export const globalErrorHandler = (
     errorMessage = 'Error occurred during query execution';
   }
 
+  const isDevelopment = config.node_env === 'development';
+
   res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json({
     success: false,
     statusCode: statusCode || httpStatus.INTERNAL_SERVER_ERROR,
     message: errorMessage,
-    errorDetails: errorDetails,
+    ...(isDevelopment && { errorDetails }),
   });
 };

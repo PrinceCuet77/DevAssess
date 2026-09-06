@@ -17,23 +17,28 @@ import {
 } from './purchases.interfaces';
 
 const purchaseInclude = {
-  assessment: {
+  items: {
     select: {
-      id: true,
-      title: true,
-      description: true,
-      thumbnailUrl: true,
-      price: true,
-      duration: true,
-      passingPercentage: true,
-      creator: {
+      assessment: {
         select: {
           id: true,
-          name: true,
-          email: true,
+          title: true,
+          description: true,
+          thumbnailUrl: true,
+          price: true,
+          duration: true,
+          passingPercentage: true,
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       },
     },
+    orderBy: { createdAt: 'asc' },
   },
   payments: {
     select: {
@@ -49,6 +54,19 @@ const purchaseInclude = {
     orderBy: { createdAt: 'desc' },
   },
 } satisfies Prisma.PurchaseInclude;
+
+const serializePurchase = <
+  T extends { items: Array<{ assessment: unknown }> },
+>(
+  purchase: T,
+) => {
+  const { items, ...rest } = purchase;
+
+  return {
+    ...rest,
+    assessments: items.map((item) => item.assessment),
+  };
+};
 
 const createPurchase = async (
   customerId: string,
@@ -80,11 +98,13 @@ const createPurchase = async (
     );
   }
 
-  const alreadyPurchased = await prisma.purchase.findMany({
+  const alreadyPurchased = await prisma.purchaseItem.findMany({
     where: {
-      customerId,
       assessmentId: { in: assessmentIds },
-      payments: { some: { status: PaymentStatus.SUCCESS } },
+      purchase: {
+        customerId,
+        payments: { some: { status: PaymentStatus.SUCCESS } },
+      },
     },
     select: { assessmentId: true },
   });
@@ -92,7 +112,7 @@ const createPurchase = async (
   if (alreadyPurchased.length) {
     const purchasedTitles = assessments
       .filter((assessment) =>
-        alreadyPurchased.some((p) => p.assessmentId === assessment.id),
+        alreadyPurchased.some((item) => item.assessmentId === assessment.id),
       )
       .map((assessment) => assessment.title);
     throw new ConflictError(
@@ -100,20 +120,31 @@ const createPurchase = async (
     );
   }
 
-  const purchases = await prisma.$transaction(
-    assessments.map((assessment) =>
-      prisma.purchase.create({
-        data: {
-          customerId,
-          assessmentId: assessment.id,
-          price: assessment.price,
-        },
-        include: purchaseInclude,
-      }),
-    ),
+  // Keep the request order so the response lines up with what the client sent.
+  const orderedAssessments = assessmentIds.map(
+    (id) => assessments.find((assessment) => assessment.id === id)!,
   );
 
-  return purchases;
+  const total = orderedAssessments.reduce(
+    (sum, assessment) => sum.plus(assessment.price),
+    new Prisma.Decimal(0),
+  );
+
+  const purchase = await prisma.purchase.create({
+    data: {
+      customerId,
+      price: total,
+      items: {
+        create: orderedAssessments.map((assessment) => ({
+          assessmentId: assessment.id,
+          price: assessment.price,
+        })),
+      },
+    },
+    include: purchaseInclude,
+  });
+
+  return serializePurchase(purchase);
 };
 
 const getAllPurchasesByUserId = async (
@@ -139,18 +170,24 @@ const getAllPurchasesByUserId = async (
     where.customerId = customerId;
   }
 
+  const itemFilter: Prisma.PurchaseItemWhereInput = {};
+
   if (assessmentId) {
-    where.assessmentId = assessmentId;
+    itemFilter.assessmentId = assessmentId;
+  }
+
+  if (search) {
+    itemFilter.assessment = {
+      title: { contains: search, mode: 'insensitive' },
+    };
+  }
+
+  if (Object.keys(itemFilter).length) {
+    where.items = { some: itemFilter };
   }
 
   if (paymentStatus) {
     where.payments = { some: { status: paymentStatus } };
-  }
-
-  if (search) {
-    where.assessment = {
-      title: { contains: search, mode: 'insensitive' },
-    };
   }
 
   const skip = (Number(page) - 1) * Number(limit);
@@ -167,7 +204,7 @@ const getAllPurchasesByUserId = async (
   ]);
 
   return {
-    purchases,
+    purchases: purchases.map(serializePurchase),
     meta: {
       page: Number(page),
       limit: Number(limit),
@@ -207,7 +244,7 @@ const getSinglePurchaseById = async (
     throw new NotFoundError('Purchase not found');
   }
 
-  return purchase;
+  return serializePurchase(purchase);
 };
 
 export const purchasesServices = {

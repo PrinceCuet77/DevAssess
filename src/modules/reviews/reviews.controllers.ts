@@ -11,7 +11,7 @@ import { reviewsServices } from './reviews.services';
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   const review = await reviewsServices.createReviewInDB(
-    req.user!.id,
+    req.user!.id as string,
     req.body as ICreateReviewPayload,
   );
 

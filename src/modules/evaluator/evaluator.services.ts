@@ -286,40 +286,66 @@ const deleteSingleAssessmentById = async (
   });
 };
 
-const myAssessmentPurchaseInclude = {
-  customer: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      avatarUrl: true,
-      profession: true,
-      company: true,
+const myAssessmentPurchaseInclude = (evaluatorId: string) =>
+  ({
+    customer: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        profession: true,
+        company: true,
+      },
     },
-  },
-  assessment: {
-    select: {
-      id: true,
-      title: true,
-      thumbnailUrl: true,
-      price: true,
-      status: true,
+    items: {
+      where: { assessment: { creatorId: evaluatorId } },
+      select: {
+        price: true,
+        assessment: {
+          select: {
+            id: true,
+            title: true,
+            thumbnailUrl: true,
+            price: true,
+            status: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
     },
-  },
-  payments: {
-    select: {
-      id: true,
-      transactionId: true,
-      amount: true,
-      currency: true,
-      status: true,
-      method: true,
-      paidAt: true,
-      createdAt: true,
+    payments: {
+      select: {
+        id: true,
+        transactionId: true,
+        amount: true,
+        currency: true,
+        status: true,
+        method: true,
+        paidAt: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
     },
-    orderBy: { createdAt: 'desc' },
-  },
-} satisfies Prisma.PurchaseInclude;
+  }) satisfies Prisma.PurchaseInclude;
+
+// `price` is the whole order's total; `subtotal` is what this evaluator earned on it.
+const serializeMyAssessmentPurchase = <
+  T extends { items: Array<{ price: Prisma.Decimal; assessment: unknown }> },
+>(
+  purchase: T,
+) => {
+  const { items, ...rest } = purchase;
+
+  return {
+    ...rest,
+    subtotal: items.reduce(
+      (sum, item) => sum.plus(item.price),
+      new Prisma.Decimal(0),
+    ),
+    assessments: items.map((item) => item.assessment),
+  };
+};
 
 const getMyAssessmentPurchaseList = async (
   evaluatorId: string,
@@ -336,13 +362,15 @@ const getMyAssessmentPurchaseList = async (
     sortOrder = 'desc',
   } = query;
 
-  const where: Prisma.PurchaseWhereInput = {
+  const itemFilter: Prisma.PurchaseItemWhereInput = {
     assessment: { creatorId: evaluatorId },
   };
 
   if (assessmentId) {
-    where.assessmentId = assessmentId;
+    itemFilter.assessmentId = assessmentId;
   }
+
+  const where: Prisma.PurchaseWhereInput = { items: { some: itemFilter } };
 
   if (customerId) {
     where.customerId = customerId;
@@ -354,7 +382,17 @@ const getMyAssessmentPurchaseList = async (
 
   if (search) {
     where.OR = [
-      { assessment: { title: { contains: search, mode: 'insensitive' } } },
+      {
+        items: {
+          some: {
+            ...itemFilter,
+            assessment: {
+              creatorId: evaluatorId,
+              title: { contains: search, mode: 'insensitive' },
+            },
+          },
+        },
+      },
       { customer: { name: { contains: search, mode: 'insensitive' } } },
       { customer: { email: { contains: search, mode: 'insensitive' } } },
     ];
@@ -365,7 +403,7 @@ const getMyAssessmentPurchaseList = async (
   const [purchases, total] = await Promise.all([
     prisma.purchase.findMany({
       where,
-      include: myAssessmentPurchaseInclude,
+      include: myAssessmentPurchaseInclude(evaluatorId),
       orderBy: { [sortBy]: sortOrder },
       skip,
       take: Number(limit),
@@ -374,7 +412,7 @@ const getMyAssessmentPurchaseList = async (
   ]);
 
   return {
-    purchases,
+    purchases: purchases.map(serializeMyAssessmentPurchase),
     meta: {
       page: Number(page),
       limit: Number(limit),
@@ -388,18 +426,21 @@ const getMyAssessmentPurchaseByPurchaseId = async (
   evaluatorId: string,
   purchaseId: string,
 ) => {
-  // Combine id + assessment.creatorId so a purchase on someone else's
-  // assessment 404s instead of leaking its existence.
+  // Combine id + the creator of an item so a purchase carrying none of this
+  // evaluator's assessments 404s instead of leaking its existence.
   const purchase = await prisma.purchase.findFirst({
-    where: { id: purchaseId, assessment: { creatorId: evaluatorId } },
-    include: myAssessmentPurchaseInclude,
+    where: {
+      id: purchaseId,
+      items: { some: { assessment: { creatorId: evaluatorId } } },
+    },
+    include: myAssessmentPurchaseInclude(evaluatorId),
   });
 
   if (!purchase) {
     throw new NotFoundError('Purchase not found');
   }
 
-  return purchase;
+  return serializeMyAssessmentPurchase(purchase);
 };
 
 const updateMyAssessmentPurchaseByPurchaseId = async (
@@ -407,21 +448,37 @@ const updateMyAssessmentPurchaseByPurchaseId = async (
   purchaseId: string,
   payload: IUpdateMyAssessmentPurchasePayload,
 ) => {
-  const purchase = await prisma.purchase.findFirst({
-    where: { id: purchaseId, assessment: { creatorId: evaluatorId } },
+  const item = await prisma.purchaseItem.findFirst({
+    where: {
+      purchaseId,
+      assessmentId: payload.assessmentId,
+      assessment: { creatorId: evaluatorId },
+    },
   });
 
-  if (!purchase) {
+  if (!item) {
     throw new NotFoundError('Purchase not found');
   }
 
-  const updatedPurchase = await prisma.purchase.update({
-    where: { id: purchaseId },
-    data: { price: payload.price },
-    include: myAssessmentPurchaseInclude,
+  const updatedPurchase = await prisma.$transaction(async (tx) => {
+    await tx.purchaseItem.update({
+      where: { id: item.id },
+      data: { price: payload.price },
+    });
+
+    const totalAgg = await tx.purchaseItem.aggregate({
+      where: { purchaseId },
+      _sum: { price: true },
+    });
+
+    return tx.purchase.update({
+      where: { id: purchaseId },
+      data: { price: totalAgg._sum.price ?? 0 },
+      include: myAssessmentPurchaseInclude(evaluatorId),
+    });
   });
 
-  return updatedPurchase;
+  return serializeMyAssessmentPurchase(updatedPurchase);
 };
 
 // Turns a groupBy result (e.g. [{ status: 'PUBLISHED', _count: { _all: 2 } }]) into { PUBLISHED: 2 }.
@@ -451,7 +508,8 @@ const getDashboard = async (evaluatorId: string) => {
     topAssessments,
   ] = await Promise.all([
     prisma.assessment.count({ where: { creatorId: evaluatorId } }),
-    prisma.purchase.count({
+    // Counts assessments sold, not orders — an order can carry several of them.
+    prisma.purchaseItem.count({
       where: { assessment: { creatorId: evaluatorId } },
     }),
     prisma.attempt.count({ where: { assessment: { creatorId: evaluatorId } } }),
@@ -468,12 +526,12 @@ const getDashboard = async (evaluatorId: string) => {
       where: { assessment: { creatorId: evaluatorId } },
       _count: { _all: true },
     }),
-    prisma.payment.aggregate({
+    prisma.purchaseItem.aggregate({
       where: {
-        status: PaymentStatus.SUCCESS,
-        purchase: { assessment: { creatorId: evaluatorId } },
+        assessment: { creatorId: evaluatorId },
+        purchase: { payments: { some: { status: PaymentStatus.SUCCESS } } },
       },
-      _sum: { amount: true },
+      _sum: { price: true },
     }),
     prisma.review.aggregate({
       where: { assessment: { creatorId: evaluatorId }, deletedAt: null },
@@ -492,18 +550,23 @@ const getDashboard = async (evaluatorId: string) => {
         isPassed: true,
       },
     }),
-    prisma.purchase.findMany({
+    prisma.purchaseItem.findMany({
       where: { assessment: { creatorId: evaluatorId } },
       select: {
         id: true,
+        purchaseId: true,
         price: true,
         createdAt: true,
-        customer: { select: { id: true, name: true, email: true } },
         assessment: { select: { id: true, title: true } },
-        payments: {
-          select: { status: true },
-          orderBy: { createdAt: 'desc' },
-          take: 1,
+        purchase: {
+          select: {
+            customer: { select: { id: true, name: true, email: true } },
+            payments: {
+              select: { status: true },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+            },
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -530,10 +593,10 @@ const getDashboard = async (evaluatorId: string) => {
         price: true,
         status: true,
         _count: {
-          select: { purchases: true, reviews: true, attempts: true },
+          select: { purchaseItems: true, reviews: true, attempts: true },
         },
       },
-      orderBy: { purchases: { _count: 'desc' } },
+      orderBy: { purchaseItems: { _count: 'desc' } },
       take: 5,
     }),
   ]);
@@ -550,7 +613,7 @@ const getDashboard = async (evaluatorId: string) => {
       totalPurchases,
       totalAttempts,
       totalReviews,
-      totalRevenue: revenueAgg._sum.amount ?? 0,
+      totalRevenue: revenueAgg._sum.price ?? 0,
       averageRating: ratingAgg._avg.rating ?? 0,
       totalEvaluatedAttempts,
       totalPassedAttempts,
@@ -558,9 +621,20 @@ const getDashboard = async (evaluatorId: string) => {
       assessmentsByStatus: groupCounts(assessmentsByStatus, 'status'),
       attemptsByStatus: groupCounts(attemptsByStatus, 'status'),
     },
-    recentPurchases,
+    recentPurchases: recentPurchases.map(({ purchase, ...item }) => ({
+      ...item,
+      customer: purchase.customer,
+      payments: purchase.payments,
+    })),
     recentReviews,
-    topAssessments,
+    topAssessments: topAssessments.map(({ _count, ...assessment }) => ({
+      ...assessment,
+      _count: {
+        purchases: _count.purchaseItems,
+        reviews: _count.reviews,
+        attempts: _count.attempts,
+      },
+    })),
   };
 };
 

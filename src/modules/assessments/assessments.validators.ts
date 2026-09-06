@@ -1,20 +1,27 @@
 import { z } from 'zod';
 
-const splitTags = (value: string) =>
+const normalizeTags = (values: string[]) =>
   Array.from(
     new Set(
-      value
-        .split(',')
+      values
+        .flatMap((tag) => tag.split(','))
         .map((tag) => tag.trim().toLowerCase())
         .filter((tag) => tag.length > 0),
     ),
   );
 
 const tagsSchema = z
-  .string()
-  .trim()
+  .union([z.string(), z.array(z.string())])
   .optional()
-  .transform((value) => (value ? splitTags(value) : undefined));
+  .transform((value) => {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    const tags = normalizeTags(Array.isArray(value) ? value : [value]);
+
+    return tags.length ? tags : undefined;
+  });
 
 export const getAllAssessmentsSchema = z.object({
   tags: tagsSchema,

@@ -22,8 +22,8 @@ model Assessment {
   questions Json
   answers   Json
 
-  purchases Purchase[]
-  reviews   Review[]
+  purchaseItems PurchaseItem[]
+  reviews       Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

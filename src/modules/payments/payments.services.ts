@@ -25,7 +25,10 @@ const createPaymentInDB = async (
     where: { id: purchaseId, customerId },
     include: {
       customer: true,
-      assessment: { select: { title: true } },
+      items: {
+        select: { assessment: { select: { title: true } } },
+        orderBy: { createdAt: 'asc' },
+      },
     },
   });
 
@@ -41,11 +44,18 @@ const createPaymentInDB = async (
   });
 
   if (existingSuccessfulPayment) {
-    throw new ConflictError('This assessment has already been purchased');
+    throw new ConflictError('This purchase has already been paid for');
   }
 
   const transactionId = `TRNX_${purchase.id}_${Date.now()}`;
   const { customer } = purchase;
+
+  // One order can cover several assessments; SSLCommerz only takes a single
+  // product name, so send the titles as one comma-separated line.
+  const productName = purchase.items
+    .map((item) => item.assessment.title)
+    .join(', ')
+    .slice(0, 255);
 
   const sslPayload = {
     store_id: config.ssl_commerz_store_id,
@@ -66,7 +76,7 @@ const createPaymentInDB = async (
     cus_country: 'Bangladesh',
     cus_phone: '017xxxxxxxx',
     cus_fax: '017xxxxxxxx',
-    product_name: purchase.assessment.title,
+    product_name: productName,
     product_category: 'Assessment',
     product_profile: 'general',
     shipping_method: 'NO',
@@ -95,6 +105,30 @@ const createPaymentInDB = async (
   return {
     gatewayPageURL: data.GatewayPageURL,
     transactionId,
+  };
+};
+
+const paymentPurchaseAssessmentSelect = {
+  id: true,
+  title: true,
+  thumbnailUrl: true,
+  price: true,
+} satisfies Prisma.AssessmentSelect;
+
+// Line items stay internal — a payment reports the assessments its order covers.
+const serializePayment = <
+  T extends { purchase: { items: Array<{ assessment: unknown }> } },
+>(
+  payment: T,
+) => {
+  const { items, ...purchase } = payment.purchase;
+
+  return {
+    ...payment,
+    purchase: {
+      ...purchase,
+      assessments: items.map((item) => item.assessment),
+    },
   };
 };
 
@@ -200,13 +234,9 @@ const getPaymentsHistory = async (
           select: {
             id: true,
             price: true,
-            assessment: {
-              select: {
-                id: true,
-                title: true,
-                thumbnailUrl: true,
-                price: true,
-              },
+            items: {
+              select: { assessment: { select: paymentPurchaseAssessmentSelect } },
+              orderBy: { createdAt: 'asc' },
             },
           },
         },
@@ -227,7 +257,7 @@ const getPaymentsHistory = async (
   const totalPages = Math.ceil(total / Number(limit));
 
   return {
-    payments,
+    payments: payments.map(serializePayment),
     meta: {
       page: Number(page),
       limit: Number(limit),
@@ -250,13 +280,9 @@ const getPaymentById = async (paymentId: string, customerId: string) => {
               email: true,
             },
           },
-          assessment: {
-            select: {
-              id: true,
-              title: true,
-              thumbnailUrl: true,
-              price: true,
-            },
+          items: {
+            select: { assessment: { select: paymentPurchaseAssessmentSelect } },
+            orderBy: { createdAt: 'asc' },
           },
         },
       },
@@ -271,7 +297,7 @@ const getPaymentById = async (paymentId: string, customerId: string) => {
     throw new NotFoundError('Payment not found');
   }
 
-  return payment;
+  return serializePayment(payment);
 };
 
 export const paymentServices = {

@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.ts"
-import type * as Prisma from "../internal/prismaNamespace.ts"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model Assessment
@@ -310,7 +310,7 @@ export type AssessmentWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Assessment"> | Date | string
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attempts?: Prisma.AttemptListRelationFilter
-  purchases?: Prisma.PurchaseListRelationFilter
+  purchaseItems?: Prisma.PurchaseItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
 }
 
@@ -334,7 +334,7 @@ export type AssessmentOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   creator?: Prisma.UserOrderByWithRelationInput
   attempts?: Prisma.AttemptOrderByRelationAggregateInput
-  purchases?: Prisma.PurchaseOrderByRelationAggregateInput
+  purchaseItems?: Prisma.PurchaseItemOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
 }
 
@@ -361,7 +361,7 @@ export type AssessmentWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Assessment"> | Date | string
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attempts?: Prisma.AttemptListRelationFilter
-  purchases?: Prisma.PurchaseListRelationFilter
+  purchaseItems?: Prisma.PurchaseItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
 }, "id">
 
@@ -432,7 +432,7 @@ export type AssessmentCreateInput = {
   updatedAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutAssessmentsInput
   attempts?: Prisma.AttemptCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssessmentInput
 }
 
@@ -455,7 +455,7 @@ export type AssessmentUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.AttemptUncheckedCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseUncheckedCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAssessmentInput
 }
 
@@ -478,7 +478,7 @@ export type AssessmentUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutAssessmentsNestedInput
   attempts?: Prisma.AttemptUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssessmentNestedInput
 }
 
@@ -501,7 +501,7 @@ export type AssessmentUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.AttemptUncheckedUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUncheckedUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutAssessmentNestedInput
 }
 
@@ -712,18 +712,18 @@ export type AssessmentUpdateOneRequiredWithoutAttemptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssessmentUpdateToOneWithWhereWithoutAttemptsInput, Prisma.AssessmentUpdateWithoutAttemptsInput>, Prisma.AssessmentUncheckedUpdateWithoutAttemptsInput>
 }
 
-export type AssessmentCreateNestedOneWithoutPurchasesInput = {
-  create?: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchasesInput, Prisma.AssessmentUncheckedCreateWithoutPurchasesInput>
-  connectOrCreate?: Prisma.AssessmentCreateOrConnectWithoutPurchasesInput
+export type AssessmentCreateNestedOneWithoutPurchaseItemsInput = {
+  create?: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedCreateWithoutPurchaseItemsInput>
+  connectOrCreate?: Prisma.AssessmentCreateOrConnectWithoutPurchaseItemsInput
   connect?: Prisma.AssessmentWhereUniqueInput
 }
 
-export type AssessmentUpdateOneRequiredWithoutPurchasesNestedInput = {
-  create?: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchasesInput, Prisma.AssessmentUncheckedCreateWithoutPurchasesInput>
-  connectOrCreate?: Prisma.AssessmentCreateOrConnectWithoutPurchasesInput
-  upsert?: Prisma.AssessmentUpsertWithoutPurchasesInput
+export type AssessmentUpdateOneRequiredWithoutPurchaseItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedCreateWithoutPurchaseItemsInput>
+  connectOrCreate?: Prisma.AssessmentCreateOrConnectWithoutPurchaseItemsInput
+  upsert?: Prisma.AssessmentUpsertWithoutPurchaseItemsInput
   connect?: Prisma.AssessmentWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssessmentUpdateToOneWithWhereWithoutPurchasesInput, Prisma.AssessmentUpdateWithoutPurchasesInput>, Prisma.AssessmentUncheckedUpdateWithoutPurchasesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssessmentUpdateToOneWithWhereWithoutPurchaseItemsInput, Prisma.AssessmentUpdateWithoutPurchaseItemsInput>, Prisma.AssessmentUncheckedUpdateWithoutPurchaseItemsInput>
 }
 
 export type AssessmentCreateNestedOneWithoutReviewsInput = {
@@ -800,7 +800,7 @@ export type AssessmentCreateWithoutAttemptsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutAssessmentsInput
-  purchases?: Prisma.PurchaseCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssessmentInput
 }
 
@@ -822,7 +822,7 @@ export type AssessmentUncheckedCreateWithoutAttemptsInput = {
   answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  purchases?: Prisma.PurchaseUncheckedCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAssessmentInput
 }
 
@@ -860,7 +860,7 @@ export type AssessmentUpdateWithoutAttemptsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutAssessmentsNestedInput
-  purchases?: Prisma.PurchaseUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssessmentNestedInput
 }
 
@@ -882,11 +882,11 @@ export type AssessmentUncheckedUpdateWithoutAttemptsInput = {
   answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  purchases?: Prisma.PurchaseUncheckedUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutAssessmentNestedInput
 }
 
-export type AssessmentCreateWithoutPurchasesInput = {
+export type AssessmentCreateWithoutPurchaseItemsInput = {
   id?: string
   title: string
   description?: string | null
@@ -908,7 +908,7 @@ export type AssessmentCreateWithoutPurchasesInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssessmentInput
 }
 
-export type AssessmentUncheckedCreateWithoutPurchasesInput = {
+export type AssessmentUncheckedCreateWithoutPurchaseItemsInput = {
   id?: string
   creatorId: string
   title: string
@@ -930,23 +930,23 @@ export type AssessmentUncheckedCreateWithoutPurchasesInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAssessmentInput
 }
 
-export type AssessmentCreateOrConnectWithoutPurchasesInput = {
+export type AssessmentCreateOrConnectWithoutPurchaseItemsInput = {
   where: Prisma.AssessmentWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchasesInput, Prisma.AssessmentUncheckedCreateWithoutPurchasesInput>
+  create: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedCreateWithoutPurchaseItemsInput>
 }
 
-export type AssessmentUpsertWithoutPurchasesInput = {
-  update: Prisma.XOR<Prisma.AssessmentUpdateWithoutPurchasesInput, Prisma.AssessmentUncheckedUpdateWithoutPurchasesInput>
-  create: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchasesInput, Prisma.AssessmentUncheckedCreateWithoutPurchasesInput>
+export type AssessmentUpsertWithoutPurchaseItemsInput = {
+  update: Prisma.XOR<Prisma.AssessmentUpdateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedUpdateWithoutPurchaseItemsInput>
+  create: Prisma.XOR<Prisma.AssessmentCreateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedCreateWithoutPurchaseItemsInput>
   where?: Prisma.AssessmentWhereInput
 }
 
-export type AssessmentUpdateToOneWithWhereWithoutPurchasesInput = {
+export type AssessmentUpdateToOneWithWhereWithoutPurchaseItemsInput = {
   where?: Prisma.AssessmentWhereInput
-  data: Prisma.XOR<Prisma.AssessmentUpdateWithoutPurchasesInput, Prisma.AssessmentUncheckedUpdateWithoutPurchasesInput>
+  data: Prisma.XOR<Prisma.AssessmentUpdateWithoutPurchaseItemsInput, Prisma.AssessmentUncheckedUpdateWithoutPurchaseItemsInput>
 }
 
-export type AssessmentUpdateWithoutPurchasesInput = {
+export type AssessmentUpdateWithoutPurchaseItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -968,7 +968,7 @@ export type AssessmentUpdateWithoutPurchasesInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutAssessmentNestedInput
 }
 
-export type AssessmentUncheckedUpdateWithoutPurchasesInput = {
+export type AssessmentUncheckedUpdateWithoutPurchaseItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   creatorId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1009,7 +1009,7 @@ export type AssessmentCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutAssessmentsInput
   attempts?: Prisma.AttemptCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemCreateNestedManyWithoutAssessmentInput
 }
 
 export type AssessmentUncheckedCreateWithoutReviewsInput = {
@@ -1031,7 +1031,7 @@ export type AssessmentUncheckedCreateWithoutReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.AttemptUncheckedCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseUncheckedCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedCreateNestedManyWithoutAssessmentInput
 }
 
 export type AssessmentCreateOrConnectWithoutReviewsInput = {
@@ -1069,7 +1069,7 @@ export type AssessmentUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutAssessmentsNestedInput
   attempts?: Prisma.AttemptUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUpdateManyWithoutAssessmentNestedInput
 }
 
 export type AssessmentUncheckedUpdateWithoutReviewsInput = {
@@ -1091,7 +1091,7 @@ export type AssessmentUncheckedUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.AttemptUncheckedUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUncheckedUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedUpdateManyWithoutAssessmentNestedInput
 }
 
 export type AssessmentCreateWithoutCreatorInput = {
@@ -1112,7 +1112,7 @@ export type AssessmentCreateWithoutCreatorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.AttemptCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssessmentInput
 }
 
@@ -1134,7 +1134,7 @@ export type AssessmentUncheckedCreateWithoutCreatorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.AttemptUncheckedCreateNestedManyWithoutAssessmentInput
-  purchases?: Prisma.PurchaseUncheckedCreateNestedManyWithoutAssessmentInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedCreateNestedManyWithoutAssessmentInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAssessmentInput
 }
 
@@ -1224,7 +1224,7 @@ export type AssessmentUpdateWithoutCreatorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.AttemptUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssessmentNestedInput
 }
 
@@ -1246,7 +1246,7 @@ export type AssessmentUncheckedUpdateWithoutCreatorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.AttemptUncheckedUpdateManyWithoutAssessmentNestedInput
-  purchases?: Prisma.PurchaseUncheckedUpdateManyWithoutAssessmentNestedInput
+  purchaseItems?: Prisma.PurchaseItemUncheckedUpdateManyWithoutAssessmentNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutAssessmentNestedInput
 }
 
@@ -1276,13 +1276,13 @@ export type AssessmentUncheckedUpdateManyWithoutCreatorInput = {
 
 export type AssessmentCountOutputType = {
   attempts: number
-  purchases: number
+  purchaseItems: number
   reviews: number
 }
 
 export type AssessmentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attempts?: boolean | AssessmentCountOutputTypeCountAttemptsArgs
-  purchases?: boolean | AssessmentCountOutputTypeCountPurchasesArgs
+  purchaseItems?: boolean | AssessmentCountOutputTypeCountPurchaseItemsArgs
   reviews?: boolean | AssessmentCountOutputTypeCountReviewsArgs
 }
 
@@ -1306,8 +1306,8 @@ export type AssessmentCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.T
 /**
  * AssessmentCountOutputType without action
  */
-export type AssessmentCountOutputTypeCountPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PurchaseWhereInput
+export type AssessmentCountOutputTypeCountPurchaseItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PurchaseItemWhereInput
 }
 
 /**
@@ -1338,7 +1338,7 @@ export type AssessmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.Assessment$attemptsArgs<ExtArgs>
-  purchases?: boolean | Prisma.Assessment$purchasesArgs<ExtArgs>
+  purchaseItems?: boolean | Prisma.Assessment$purchaseItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.Assessment$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.AssessmentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assessment"]>
@@ -1409,7 +1409,7 @@ export type AssessmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type AssessmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.Assessment$attemptsArgs<ExtArgs>
-  purchases?: boolean | Prisma.Assessment$purchasesArgs<ExtArgs>
+  purchaseItems?: boolean | Prisma.Assessment$purchaseItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.Assessment$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.AssessmentCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1425,7 +1425,7 @@ export type $AssessmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     creator: Prisma.$UserPayload<ExtArgs>
     attempts: Prisma.$AttemptPayload<ExtArgs>[]
-    purchases: Prisma.$PurchasePayload<ExtArgs>[]
+    purchaseItems: Prisma.$PurchaseItemPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1842,7 +1842,7 @@ export interface Prisma__AssessmentClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   creator<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attempts<T extends Prisma.Assessment$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assessment$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  purchases<T extends Prisma.Assessment$purchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assessment$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  purchaseItems<T extends Prisma.Assessment$purchaseItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assessment$purchaseItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.Assessment$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assessment$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2315,27 +2315,27 @@ export type Assessment$attemptsArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * Assessment.purchases
+ * Assessment.purchaseItems
  */
-export type Assessment$purchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Assessment$purchaseItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Purchase
+   * Select specific fields to fetch from the PurchaseItem
    */
-  select?: Prisma.PurchaseSelect<ExtArgs> | null
+  select?: Prisma.PurchaseItemSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Purchase
+   * Omit specific fields from the PurchaseItem
    */
-  omit?: Prisma.PurchaseOmit<ExtArgs> | null
+  omit?: Prisma.PurchaseItemOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PurchaseInclude<ExtArgs> | null
-  where?: Prisma.PurchaseWhereInput
-  orderBy?: Prisma.PurchaseOrderByWithRelationInput | Prisma.PurchaseOrderByWithRelationInput[]
-  cursor?: Prisma.PurchaseWhereUniqueInput
+  include?: Prisma.PurchaseItemInclude<ExtArgs> | null
+  where?: Prisma.PurchaseItemWhereInput
+  orderBy?: Prisma.PurchaseItemOrderByWithRelationInput | Prisma.PurchaseItemOrderByWithRelationInput[]
+  cursor?: Prisma.PurchaseItemWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.PurchaseScalarFieldEnum | Prisma.PurchaseScalarFieldEnum[]
+  distinct?: Prisma.PurchaseItemScalarFieldEnum | Prisma.PurchaseItemScalarFieldEnum[]
 }
 
 /**

@@ -63,15 +63,17 @@ const evaluateAssessment = async (
     throw new NotFoundError('Assessment not found');
   }
 
-  const purchase = await prisma.purchase.findFirst({
+  const purchasedItem = await prisma.purchaseItem.findFirst({
     where: {
       assessmentId,
-      customerId: developerId,
-      payments: { some: { status: PaymentStatus.SUCCESS } },
+      purchase: {
+        customerId: developerId,
+        payments: { some: { status: PaymentStatus.SUCCESS } },
+      },
     },
   });
 
-  if (!purchase) {
+  if (!purchasedItem) {
     throw new ForbiddenError(
       'You must purchase this assessment before you can evaluate it',
     );
@@ -243,7 +245,6 @@ const getAllAttemptsByAssessmentId = async (
 
 const getDashboard = async (developerId: string) => {
   const [
-    totalPurchasedAssessments,
     totalAttempts,
     evaluatedAttempts,
     totalReviewsGiven,
@@ -252,18 +253,12 @@ const getDashboard = async (developerId: string) => {
     purchasedAssessmentRows,
     attemptedAssessmentRows,
   ] = await Promise.all([
-    prisma.purchase.count({
-      where: {
-        customerId: developerId,
-        payments: { some: { status: PaymentStatus.SUCCESS } },
-      },
-    }),
     prisma.attempt.count({ where: { developerId } }),
     prisma.attempt.findMany({
       where: { developerId, status: AttemptStatus.EVALUATED },
       select: {
         score: true,
-        passed: true,
+        isPassed: true,
         assessment: { select: { questions: true } },
       },
     }),
@@ -273,7 +268,7 @@ const getDashboard = async (developerId: string) => {
       select: {
         id: true,
         score: true,
-        passed: true,
+        isPassed: true,
         status: true,
         evaluatedAt: true,
         createdAt: true,
@@ -290,8 +285,13 @@ const getDashboard = async (developerId: string) => {
         id: true,
         price: true,
         createdAt: true,
-        assessment: {
-          select: { id: true, title: true, thumbnailUrl: true, price: true },
+        items: {
+          select: {
+            assessment: {
+              select: { id: true, title: true, thumbnailUrl: true, price: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
         },
         payments: {
           select: { status: true },
@@ -302,10 +302,12 @@ const getDashboard = async (developerId: string) => {
       orderBy: { createdAt: 'desc' },
       take: 5,
     }),
-    prisma.purchase.findMany({
+    prisma.purchaseItem.findMany({
       where: {
-        customerId: developerId,
-        payments: { some: { status: PaymentStatus.SUCCESS } },
+        purchase: {
+          customerId: developerId,
+          payments: { some: { status: PaymentStatus.SUCCESS } },
+        },
       },
       select: { assessmentId: true },
       distinct: ['assessmentId'],
@@ -334,7 +336,7 @@ const getDashboard = async (developerId: string) => {
       : 0;
 
   const passedAttemptsCount = evaluatedAttempts.filter(
-    (attempt) => attempt.passed,
+    (attempt) => attempt.isPassed,
   ).length;
   const passRate =
     evaluatedAttempts.length > 0
@@ -350,7 +352,8 @@ const getDashboard = async (developerId: string) => {
 
   return {
     stats: {
-      totalPurchasedAssessments,
+      // Counts assessments, not orders — one order can carry several of them.
+      totalPurchasedAssessments: purchasedAssessmentRows.length,
       totalAttempts,
       totalEvaluatedAttempts: evaluatedAttempts.length,
       passedAttemptsCount,
@@ -360,7 +363,10 @@ const getDashboard = async (developerId: string) => {
       pendingAssessmentsToAttempt,
     },
     recentAttempts,
-    recentPurchases,
+    recentPurchases: recentPurchases.map(({ items, ...purchase }) => ({
+      ...purchase,
+      assessments: items.map((item) => item.assessment),
+    })),
   };
 };
 

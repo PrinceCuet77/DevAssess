@@ -12,17 +12,9 @@ const createReviewInDB = async (
   developerId: string,
   payload: ICreateReviewPayload,
 ) => {
-  const purchase = await prisma.purchase.findUnique({
-    where: { id: payload.purchaseId, customerId: developerId },
-  });
-
-  if (!purchase) {
-    throw new NotFoundError('Purchase not found');
-  }
-
   const evaluatedAttempt = await prisma.attempt.findFirst({
     where: {
-      assessmentId: purchase.assessmentId,
+      assessmentId: payload.assessmentId,
       developerId,
       status: AttemptStatus.EVALUATED,
     },
@@ -37,7 +29,7 @@ const createReviewInDB = async (
 
   const existingReview = await prisma.review.findFirst({
     where: {
-      assessmentId: purchase.assessmentId,
+      assessmentId: payload.assessmentId,
       developerId,
       deletedAt: null,
     },
@@ -55,7 +47,7 @@ const createReviewInDB = async (
       rating: payload.rating,
       comment: payload.comment,
       developerId,
-      assessmentId: purchase.assessmentId,
+      assessmentId: payload.assessmentId,
     },
   });
 

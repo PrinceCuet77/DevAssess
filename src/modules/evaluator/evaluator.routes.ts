@@ -39,7 +39,7 @@ router.post(
 
 router.get(
   '/assessments',
-  auth(Role.EVALUATOR),
+  auth(Role.EVALUATOR, Role.ADMIN),
   validate(getMyAssessmentsSchema, 'query'),
   evaluatorControllers.getMyCreatedAssessments,
 );
@@ -68,14 +68,14 @@ router.delete(
 
 router.get(
   '/purchases',
-  auth(Role.EVALUATOR),
+  auth(Role.EVALUATOR, Role.ADMIN),
   validate(getMyAssessmentPurchasesQuerySchema, 'query'),
   evaluatorControllers.getMyAssessmentPurchaseList,
 );
 
 router.get(
   '/purchases/:purchaseId',
-  auth(Role.EVALUATOR),
+  auth(Role.EVALUATOR, Role.ADMIN),
   validate(purchaseIdParamSchema, 'params'),
   evaluatorControllers.getMyAssessmentPurchaseByPurchaseId,
 );

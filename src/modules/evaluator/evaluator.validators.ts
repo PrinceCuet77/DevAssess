@@ -39,6 +39,7 @@ export const purchaseIdParamSchema = z.object({
 });
 
 export const updateMyAssessmentPurchaseSchema = z.object({
+  assessmentId: z.string().uuid('Invalid assessment id'),
   price: z.coerce.number().nonnegative('Price cannot be negative'),
 });
 
@@ -127,21 +128,20 @@ const validateQuestionsAndAnswers = (
   });
 };
 
-const splitTags = (value: string) =>
+const normalizeTags = (values: string[]) =>
   Array.from(
     new Set(
-      value
-        .split(',')
+      values
         .map((tag) => tag.trim().toLowerCase())
         .filter((tag) => tag.length > 0),
     ),
   );
 
 const tagsSchema = z
-  .string()
-  .trim()
+  .array(z.string({ message: 'Each tag must be a string' }))
+  .max(20, 'At most 20 tags are allowed')
   .optional()
-  .transform((value) => (value ? splitTags(value) : []));
+  .transform((value) => (value ? normalizeTags(value) : []));
 
 export const createAssessmentSchema = z
   .object({
@@ -167,10 +167,10 @@ export const createAssessmentSchema = z
   .superRefine(validateQuestionsAndAnswers);
 
 const optionalTagsSchema = z
-  .string()
-  .trim()
+  .array(z.string({ message: 'Each tag must be a string' }))
+  .max(20, 'At most 20 tags are allowed')
   .optional()
-  .transform((value) => (value === undefined ? undefined : splitTags(value)));
+  .transform((value) => (value === undefined ? undefined : normalizeTags(value)));
 
 const updatableAssessmentStatusSchema = z.enum(
   [

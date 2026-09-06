@@ -10,7 +10,7 @@ import {
 } from './purchases.interfaces';
 
 const createPurchase = catchAsync(async (req: Request, res: Response) => {
-  const purchases = await purchasesServices.createPurchase(
+  const purchase = await purchasesServices.createPurchase(
     req.user!.id,
     req.body as ICreatePurchasePayload,
   );
@@ -19,14 +19,14 @@ const createPurchase = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.CREATED,
     message: 'Purchase is created successfully',
-    data: purchases,
+    data: purchase,
   });
 });
 
 const getAllPurchasesByUserId = catchAsync(
   async (req: Request, res: Response) => {
     const { purchases, meta } = await purchasesServices.getAllPurchasesByUserId(
-      req.user!.id,
+      req.user!.id as string,
       req.user!.role as PurchaseQueryRole,
       req.query as unknown as IGetAllPurchasesQuery,
     );
