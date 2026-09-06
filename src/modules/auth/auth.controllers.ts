@@ -44,10 +44,12 @@ const loginUser = catchAsync(
       async (err: Error, user: User, info: IVerifyOptions) => {
         try {
           if (err) {
-            return next(err || 'Credential authentication Failed');
+            return next(err);
           }
           if (!user) {
-            return next(new Error(info?.message || 'Invalid credentials!'));
+            return next(
+              new UnauthorizedError(info?.message || 'Invalid credentials!'),
+            );
           }
 
           const { accessToken, refreshToken } = createUserTokens(
@@ -127,11 +129,13 @@ const googleCallback = catchAsync(
       async (err: Error, user: User, info: IVerifyOptions) => {
         try {
           if (err) {
-            return next(err || 'Google authentication Failed');
+            return next(err);
           }
           if (!user) {
             return next(
-              new Error(info?.message || 'Google authentication Failed'),
+              new UnauthorizedError(
+                info?.message || 'Google authentication Failed',
+              ),
             );
           }
 

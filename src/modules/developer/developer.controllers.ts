@@ -6,7 +6,37 @@ import { developerServices } from './developer.services';
 import {
   IEvaluateAssessmentPayload,
   IGetAllAttemptsQuery,
+  ISubmitAssessmentPayload,
 } from './developer.interfaces';
+
+const startAssessment = catchAsync(async (req: Request, res: Response) => {
+  const attempt = await developerServices.startAssessment(
+    req.user!.id,
+    req.params.assessmentId as string,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Assessment attempt started successfully',
+    data: attempt,
+  });
+});
+
+const submitAssessment = catchAsync(async (req: Request, res: Response) => {
+  const attempt = await developerServices.submitAssessment(
+    req.user!.id,
+    req.params.assessmentId as string,
+    req.body as ISubmitAssessmentPayload,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Assessment attempt submitted successfully',
+    data: attempt,
+  });
+});
 
 const evaluateAssessment = catchAsync(async (req: Request, res: Response) => {
   const result = await developerServices.evaluateAssessment(
@@ -17,7 +47,7 @@ const evaluateAssessment = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: 'Assessment is evaluated successfully',
     data: result,
   });
@@ -54,6 +84,8 @@ const getDashboard = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const developerControllers = {
+  startAssessment,
+  submitAssessment,
   evaluateAssessment,
   getAllAttemptsByAssessmentId,
   getDashboard,

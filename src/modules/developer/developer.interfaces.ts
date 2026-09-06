@@ -6,7 +6,12 @@ export interface ISelectedAnswer {
 }
 
 export interface IEvaluateAssessmentPayload {
-  selectedAnswer: ISelectedAnswer[];
+  attemptId: string;
+  answers: ISelectedAnswer[];
+}
+
+export interface ISubmitAssessmentPayload {
+  attemptId: string;
 }
 
 export interface IGetAllAttemptsQuery {

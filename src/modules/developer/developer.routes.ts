@@ -7,6 +7,7 @@ import {
   assessmentIdParamSchema,
   evaluateAssessmentSchema,
   getAllAttemptsQuerySchema,
+  submitAssessmentSchema,
 } from './developer.validators';
 
 const router = Router();
@@ -17,7 +18,22 @@ router.get(
   developerControllers.getDashboard,
 );
 
-router.post(
+router.get(
+  '/assessments/:assessmentId/start',
+  auth(Role.DEVELOPER),
+  validate(assessmentIdParamSchema, 'params'),
+  developerControllers.startAssessment,
+);
+
+router.patch(
+  '/assessments/:assessmentId/submit',
+  auth(Role.DEVELOPER),
+  validate(assessmentIdParamSchema, 'params'),
+  validate(submitAssessmentSchema),
+  developerControllers.submitAssessment,
+);
+
+router.patch(
   '/assessments/:assessmentId/evaluate',
   auth(Role.DEVELOPER),
   validate(assessmentIdParamSchema, 'params'),

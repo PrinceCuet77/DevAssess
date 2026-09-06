@@ -4,13 +4,18 @@ import {
   PaymentStatus,
   Prisma,
 } from '../../../generated/prisma/client';
-import { BadRequestError, ForbiddenError, NotFoundError } from '../../errors/ApiError';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from '../../errors/ApiError';
 import { prisma } from '../../lib/prisma';
 import {
   IAnswerKey,
   IEvaluateAssessmentPayload,
   IGetAllAttemptsQuery,
   IQuestion,
+  ISubmitAssessmentPayload,
 } from './developer.interfaces';
 
 const assessmentDetailsSelect = {
@@ -45,6 +50,85 @@ const attemptHistorySelect = {
   createdAt: true,
 } satisfies Prisma.AttemptSelect;
 
+const verifyPurchased = async (developerId: string, assessmentId: string) => {
+  const purchasedItem = await prisma.purchaseItem.findFirst({
+    where: {
+      assessmentId,
+      purchase: {
+        customerId: developerId,
+        payments: { some: { status: PaymentStatus.SUCCESS } },
+      },
+    },
+  });
+
+  if (!purchasedItem) {
+    throw new ForbiddenError(
+      'You must purchase this assessment before you can access it',
+    );
+  }
+};
+
+const startAssessment = async (developerId: string, assessmentId: string) => {
+  const assessment = await prisma.assessment.findFirst({
+    where: { id: assessmentId, status: AssessmentStatus.PUBLISHED },
+    select: { id: true, duration: true },
+  });
+
+  if (!assessment) {
+    throw new NotFoundError('Assessment not found');
+  }
+
+  await verifyPurchased(developerId, assessmentId);
+
+  const startedAt = new Date();
+  const endedAt = new Date(
+    startedAt.getTime() + assessment.duration * 60 * 1000,
+  );
+
+  const attempt = await prisma.attempt.create({
+    data: {
+      assessmentId,
+      developerId,
+      status: AttemptStatus.IN_PROGRESS,
+      startedAt,
+      endedAt,
+    },
+    select: attemptHistorySelect,
+  });
+
+  return attempt;
+};
+
+const submitAssessment = async (
+  developerId: string,
+  assessmentId: string,
+  payload: ISubmitAssessmentPayload,
+) => {
+  const attempt = await prisma.attempt.findFirst({
+    where: { id: payload.attemptId, assessmentId, developerId },
+    select: { id: true, status: true },
+  });
+
+  if (!attempt) {
+    throw new NotFoundError('Attempt not found');
+  }
+
+  if (attempt.status === AttemptStatus.EVALUATED) {
+    throw new BadRequestError('This attempt has already been evaluated');
+  }
+
+  const updatedAttempt = await prisma.attempt.update({
+    where: { id: attempt.id },
+    data: {
+      status: AttemptStatus.SUBMITTED,
+      submittedAt: new Date(),
+    },
+    select: attemptHistorySelect,
+  });
+
+  return updatedAttempt;
+};
+
 const evaluateAssessment = async (
   developerId: string,
   assessmentId: string,
@@ -63,20 +147,19 @@ const evaluateAssessment = async (
     throw new NotFoundError('Assessment not found');
   }
 
-  const purchasedItem = await prisma.purchaseItem.findFirst({
-    where: {
-      assessmentId,
-      purchase: {
-        customerId: developerId,
-        payments: { some: { status: PaymentStatus.SUCCESS } },
-      },
-    },
+  await verifyPurchased(developerId, assessmentId);
+
+  const attempt = await prisma.attempt.findFirst({
+    where: { id: payload.attemptId, assessmentId, developerId },
+    select: { id: true, status: true },
   });
 
-  if (!purchasedItem) {
-    throw new ForbiddenError(
-      'You must purchase this assessment before you can evaluate it',
-    );
+  if (!attempt) {
+    throw new NotFoundError('Attempt not found');
+  }
+
+  if (attempt.status === AttemptStatus.EVALUATED) {
+    throw new BadRequestError('This attempt has already been evaluated');
   }
 
   const questions = assessment.questions as unknown as IQuestion[];
@@ -84,10 +167,10 @@ const evaluateAssessment = async (
 
   const questionIds = new Set(questions.map((question) => question.id));
   const selectedAnswerIds = new Set(
-    payload.selectedAnswer.map((answer) => answer.questionId),
+    payload.answers.map((answer) => answer.questionId),
   );
 
-  const unknownAnswers = payload.selectedAnswer.filter(
+  const unknownAnswers = payload.answers.filter(
     (answer) => !questionIds.has(answer.questionId),
   );
 
@@ -105,7 +188,7 @@ const evaluateAssessment = async (
     );
   }
 
-  for (const answer of payload.selectedAnswer) {
+  for (const answer of payload.answers) {
     const question = questions.find((q) => q.id === answer.questionId);
     const validOptionIds = question!.options.map((option) => option.id);
 
@@ -116,13 +199,16 @@ const evaluateAssessment = async (
     }
   }
 
-  const totalMarks = questions.reduce((sum, question) => sum + question.marks, 0);
+  const totalMarks = questions.reduce(
+    (sum, question) => sum + question.marks,
+    0,
+  );
 
   const questionResults = questions.map((question) => {
     const correctAnswer = answerKey.find(
       (answer) => answer.questionId === question.id,
     )?.answer;
-    const selected = payload.selectedAnswer.find(
+    const selected = payload.answers.find(
       (answer) => answer.questionId === question.id,
     );
     const isCorrect = !!selected && selected.answer === correctAnswer;
@@ -146,47 +232,47 @@ const evaluateAssessment = async (
   const isPassed = percentage >= assessment.passingPercentage;
   const now = new Date();
 
-  const attempt = await prisma.attempt.create({
+  const updatedAttempt = await prisma.attempt.update({
+    where: { id: attempt.id },
     data: {
-      assessmentId,
-      developerId,
       score: Math.round(obtainedMarks),
       isPassed,
-      startedAt: now,
-      endedAt: now,
-      submittedAt: now,
       evaluatedAt: now,
       status: AttemptStatus.EVALUATED,
     },
+    select: attemptHistorySelect,
   });
 
-  const attemptHistory = await prisma.attempt.findMany({
+  const otherAttempts = await prisma.attempt.findMany({
     where: {
       assessmentId,
       developerId,
-      id: { not: attempt.id },
+      id: { not: updatedAttempt.id },
     },
     select: attemptHistorySelect,
     orderBy: { createdAt: 'desc' },
   });
 
-  const { questions: _questions, answers: _answers, ...assessmentDetails } =
-    assessment;
+  const {
+    questions: _questions,
+    answers: _answers,
+    ...assessmentDetails
+  } = assessment;
 
   return {
     assessment: assessmentDetails,
     evaluation: {
-      attemptId: attempt.id,
+      attemptId: updatedAttempt.id,
       totalMarks,
       obtainedMarks,
       percentage,
       passingPercentage: assessment.passingPercentage,
       isPassed,
-      status: attempt.status,
-      evaluatedAt: attempt.evaluatedAt,
+      status: updatedAttempt.status,
+      evaluatedAt: updatedAttempt.evaluatedAt,
       questionResults,
     },
-    attemptHistory,
+    attemptHistory: [updatedAttempt, ...otherAttempts],
   };
 };
 
@@ -288,7 +374,12 @@ const getDashboard = async (developerId: string) => {
         items: {
           select: {
             assessment: {
-              select: { id: true, title: true, thumbnailUrl: true, price: true },
+              select: {
+                id: true,
+                title: true,
+                thumbnailUrl: true,
+                price: true,
+              },
             },
           },
           orderBy: { createdAt: 'asc' },
@@ -321,7 +412,10 @@ const getDashboard = async (developerId: string) => {
 
   const percentages = evaluatedAttempts.map((attempt) => {
     const questions = attempt.assessment.questions as unknown as IQuestion[];
-    const totalMarks = questions.reduce((sum, question) => sum + question.marks, 0);
+    const totalMarks = questions.reduce(
+      (sum, question) => sum + question.marks,
+      0,
+    );
 
     return totalMarks > 0 ? ((attempt.score ?? 0) / totalMarks) * 100 : 0;
   });
@@ -340,7 +434,8 @@ const getDashboard = async (developerId: string) => {
   ).length;
   const passRate =
     evaluatedAttempts.length > 0
-      ? Math.round((passedAttemptsCount / evaluatedAttempts.length) * 10000) / 100
+      ? Math.round((passedAttemptsCount / evaluatedAttempts.length) * 10000) /
+        100
       : 0;
 
   const attemptedAssessmentIds = new Set(
@@ -371,6 +466,8 @@ const getDashboard = async (developerId: string) => {
 };
 
 export const developerServices = {
+  startAssessment,
+  submitAssessment,
   evaluateAssessment,
   getAllAttemptsByAssessmentId,
   getDashboard,

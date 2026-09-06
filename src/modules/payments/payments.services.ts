@@ -235,7 +235,9 @@ const getPaymentsHistory = async (
             id: true,
             price: true,
             items: {
-              select: { assessment: { select: paymentPurchaseAssessmentSelect } },
+              select: {
+                assessment: { select: paymentPurchaseAssessmentSelect },
+              },
               orderBy: { createdAt: 'asc' },
             },
           },

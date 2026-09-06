@@ -10,12 +10,17 @@ const selectedAnswerSchema = z.object({
   answer: z.string().trim().min(1, 'Answer is required'),
 });
 
+export const submitAssessmentSchema = z.object({
+  attemptId: z.string().uuid('Invalid attempt ID format'),
+});
+
 export const evaluateAssessmentSchema = z.object({
-  selectedAnswer: z
+  attemptId: z.string().uuid('Invalid attempt ID format'),
+  answers: z
     .array(selectedAnswerSchema)
-    .min(1, 'At least 1 selected answer is required')
-    .superRefine((selectedAnswer, ctx) => {
-      const questionIds = selectedAnswer.map((answer) => answer.questionId);
+    .min(1, 'At least 1 answer is required')
+    .superRefine((answers, ctx) => {
+      const questionIds = answers.map((answer) => answer.questionId);
 
       if (new Set(questionIds).size !== questionIds.length) {
         ctx.addIssue({
