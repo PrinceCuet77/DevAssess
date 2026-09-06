@@ -1,26 +1,26 @@
 import { Router } from 'express';
 import { AuthControllers } from './auth.controllers';
 import { validate } from '../../middlewares/validator';
-import { AuthValidators } from './auth.validators';
+import { forgotPasswordSchema, loginUserSchema, registerUserSchema, resetPasswordSchema, verifyUserEmailSchema } from './auth.validators';
 import passport from 'passport';
 
 const router = Router();
 
 router.post(
   '/register',
-  validate(AuthValidators.registerUserSchema),
+  validate(registerUserSchema),
   AuthControllers.registerUser,
 );
 
 router.post(
   '/verify-email',
-  validate(AuthValidators.verifyUserEmailSchema),
+  validate(verifyUserEmailSchema),
   AuthControllers.verifyUserEmail,
 );
 
 router.post(
   '/login',
-  validate(AuthValidators.loginUserSchema),
+  validate(loginUserSchema),
   AuthControllers.loginUser,
 );
 
@@ -37,13 +37,13 @@ router.get('/google/callback', AuthControllers.googleCallback);
 
 router.post(
   '/forgot-password',
-  validate(AuthValidators.forgotPasswordSchema),
+  validate(forgotPasswordSchema),
   AuthControllers.forgotPassword,
 );
 
 router.post(
   '/reset-password',
-  validate(AuthValidators.resetPasswordSchema),
+  validate(resetPasswordSchema),
   AuthControllers.resetPassword,
 );
 
