@@ -37,7 +37,11 @@ export const getAllUsersQuerySchema = z.object({
 });
 
 export const updateUserStatusSchema = z.object({
-  status: z.nativeEnum(UserStatus),
+  status: z.enum([
+    UserStatus.NOT_VERIFIED,
+    UserStatus.VERIFIED,
+    UserStatus.SUSPENDED,
+  ]),
 });
 
 export const getAllAssessmentsQuerySchema = z.object({

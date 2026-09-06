@@ -2,7 +2,6 @@ import { Prisma } from '../../../generated/prisma/client';
 import {
   AttemptStatus,
   PaymentStatus,
-  UserStatus,
 } from '../../../generated/prisma/enums';
 import { NotFoundError } from '../../errors/ApiError';
 import { prisma } from '../../lib/prisma';
@@ -176,7 +175,7 @@ const updateUserStatus = async (
     where: { id: userId },
     data: {
       status: payload.status,
-      deletedAt: payload.status === UserStatus.DELETED ? new Date() : null,
+      deletedAt: null,
     },
     omit: { password: true },
   });

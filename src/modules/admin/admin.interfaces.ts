@@ -16,7 +16,7 @@ export interface IGetAllUsersQuery {
 }
 
 export interface IUpdateUserStatusPayload {
-  status: UserStatus;
+  status: Exclude<UserStatus, typeof UserStatus.DELETED>;
 }
 
 export interface IGetAllAssessmentsQuery {
