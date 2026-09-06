@@ -1008,7 +1008,7 @@ export const AttemptScalarFieldEnum = {
   assessmentId: 'assessmentId',
   developerId: 'developerId',
   score: 'score',
-  passed: 'passed',
+  isPassed: 'isPassed',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
   submittedAt: 'submittedAt',

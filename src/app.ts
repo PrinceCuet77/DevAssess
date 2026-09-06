@@ -12,6 +12,7 @@ import { reviewsRoutes } from './modules/reviews/reviews.routes';
 import { assessmentsRoutes } from './modules/assessments/assessments.routes';
 import { paymentRoutes } from './modules/payments/payments.routes';
 import { purchasesRoutes } from './modules/purchases/purchases.routes';
+import { developerRoutes } from './modules/developer/developer.routes';
 
 const app: Application = express();
 
@@ -33,6 +34,7 @@ app.use('/api/v1/reviews', reviewsRoutes);
 app.use('/api/v1/assessments', assessmentsRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/purchases', purchasesRoutes);
+app.use('/api/v1/developer', developerRoutes);
 
 app.use(notFound);
 

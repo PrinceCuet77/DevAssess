@@ -39,7 +39,7 @@ export type AttemptMinAggregateOutputType = {
   assessmentId: string | null
   developerId: string | null
   score: number | null
-  passed: boolean | null
+  isPassed: boolean | null
   startedAt: Date | null
   endedAt: Date | null
   submittedAt: Date | null
@@ -54,7 +54,7 @@ export type AttemptMaxAggregateOutputType = {
   assessmentId: string | null
   developerId: string | null
   score: number | null
-  passed: boolean | null
+  isPassed: boolean | null
   startedAt: Date | null
   endedAt: Date | null
   submittedAt: Date | null
@@ -69,7 +69,7 @@ export type AttemptCountAggregateOutputType = {
   assessmentId: number
   developerId: number
   score: number
-  passed: number
+  isPassed: number
   startedAt: number
   endedAt: number
   submittedAt: number
@@ -94,7 +94,7 @@ export type AttemptMinAggregateInputType = {
   assessmentId?: true
   developerId?: true
   score?: true
-  passed?: true
+  isPassed?: true
   startedAt?: true
   endedAt?: true
   submittedAt?: true
@@ -109,7 +109,7 @@ export type AttemptMaxAggregateInputType = {
   assessmentId?: true
   developerId?: true
   score?: true
-  passed?: true
+  isPassed?: true
   startedAt?: true
   endedAt?: true
   submittedAt?: true
@@ -124,7 +124,7 @@ export type AttemptCountAggregateInputType = {
   assessmentId?: true
   developerId?: true
   score?: true
-  passed?: true
+  isPassed?: true
   startedAt?: true
   endedAt?: true
   submittedAt?: true
@@ -226,7 +226,7 @@ export type AttemptGroupByOutputType = {
   assessmentId: string
   developerId: string
   score: number | null
-  passed: boolean | null
+  isPassed: boolean | null
   startedAt: Date
   endedAt: Date | null
   submittedAt: Date | null
@@ -264,7 +264,7 @@ export type AttemptWhereInput = {
   assessmentId?: Prisma.StringFilter<"Attempt"> | string
   developerId?: Prisma.StringFilter<"Attempt"> | string
   score?: Prisma.IntNullableFilter<"Attempt"> | number | null
-  passed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
+  isPassed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
   startedAt?: Prisma.DateTimeFilter<"Attempt"> | Date | string
   endedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
@@ -281,7 +281,7 @@ export type AttemptOrderByWithRelationInput = {
   assessmentId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   score?: Prisma.SortOrderInput | Prisma.SortOrder
-  passed?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPassed?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -301,7 +301,7 @@ export type AttemptWhereUniqueInput = Prisma.AtLeast<{
   assessmentId?: Prisma.StringFilter<"Attempt"> | string
   developerId?: Prisma.StringFilter<"Attempt"> | string
   score?: Prisma.IntNullableFilter<"Attempt"> | number | null
-  passed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
+  isPassed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
   startedAt?: Prisma.DateTimeFilter<"Attempt"> | Date | string
   endedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
@@ -318,7 +318,7 @@ export type AttemptOrderByWithAggregationInput = {
   assessmentId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   score?: Prisma.SortOrderInput | Prisma.SortOrder
-  passed?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPassed?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -341,7 +341,7 @@ export type AttemptScalarWhereWithAggregatesInput = {
   assessmentId?: Prisma.StringWithAggregatesFilter<"Attempt"> | string
   developerId?: Prisma.StringWithAggregatesFilter<"Attempt"> | string
   score?: Prisma.IntNullableWithAggregatesFilter<"Attempt"> | number | null
-  passed?: Prisma.BoolNullableWithAggregatesFilter<"Attempt"> | boolean | null
+  isPassed?: Prisma.BoolNullableWithAggregatesFilter<"Attempt"> | boolean | null
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"Attempt"> | Date | string
   endedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attempt"> | Date | string | null
   submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attempt"> | Date | string | null
@@ -354,7 +354,7 @@ export type AttemptScalarWhereWithAggregatesInput = {
 export type AttemptCreateInput = {
   id?: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -371,7 +371,7 @@ export type AttemptUncheckedCreateInput = {
   assessmentId: string
   developerId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -384,7 +384,7 @@ export type AttemptUncheckedCreateInput = {
 export type AttemptUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -401,7 +401,7 @@ export type AttemptUncheckedUpdateInput = {
   assessmentId?: Prisma.StringFieldUpdateOperationsInput | string
   developerId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -416,7 +416,7 @@ export type AttemptCreateManyInput = {
   assessmentId: string
   developerId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -429,7 +429,7 @@ export type AttemptCreateManyInput = {
 export type AttemptUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -444,7 +444,7 @@ export type AttemptUncheckedUpdateManyInput = {
   assessmentId?: Prisma.StringFieldUpdateOperationsInput | string
   developerId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -469,7 +469,7 @@ export type AttemptCountOrderByAggregateInput = {
   assessmentId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   score?: Prisma.SortOrder
-  passed?: Prisma.SortOrder
+  isPassed?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -488,7 +488,7 @@ export type AttemptMaxOrderByAggregateInput = {
   assessmentId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   score?: Prisma.SortOrder
-  passed?: Prisma.SortOrder
+  isPassed?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -503,7 +503,7 @@ export type AttemptMinOrderByAggregateInput = {
   assessmentId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   score?: Prisma.SortOrder
-  passed?: Prisma.SortOrder
+  isPassed?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -620,7 +620,7 @@ export type AttemptUncheckedUpdateManyWithoutDeveloperNestedInput = {
 export type AttemptCreateWithoutAssessmentInput = {
   id?: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -635,7 +635,7 @@ export type AttemptUncheckedCreateWithoutAssessmentInput = {
   id?: string
   developerId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -679,7 +679,7 @@ export type AttemptScalarWhereInput = {
   assessmentId?: Prisma.StringFilter<"Attempt"> | string
   developerId?: Prisma.StringFilter<"Attempt"> | string
   score?: Prisma.IntNullableFilter<"Attempt"> | number | null
-  passed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
+  isPassed?: Prisma.BoolNullableFilter<"Attempt"> | boolean | null
   startedAt?: Prisma.DateTimeFilter<"Attempt"> | Date | string
   endedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Attempt"> | Date | string | null
@@ -692,7 +692,7 @@ export type AttemptScalarWhereInput = {
 export type AttemptCreateWithoutDeveloperInput = {
   id?: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -707,7 +707,7 @@ export type AttemptUncheckedCreateWithoutDeveloperInput = {
   id?: string
   assessmentId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -747,7 +747,7 @@ export type AttemptCreateManyAssessmentInput = {
   id?: string
   developerId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -760,7 +760,7 @@ export type AttemptCreateManyAssessmentInput = {
 export type AttemptUpdateWithoutAssessmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -775,7 +775,7 @@ export type AttemptUncheckedUpdateWithoutAssessmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   developerId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -789,7 +789,7 @@ export type AttemptUncheckedUpdateManyWithoutAssessmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   developerId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -803,7 +803,7 @@ export type AttemptCreateManyDeveloperInput = {
   id?: string
   assessmentId: string
   score?: number | null
-  passed?: boolean | null
+  isPassed?: boolean | null
   startedAt?: Date | string
   endedAt?: Date | string | null
   submittedAt?: Date | string | null
@@ -816,7 +816,7 @@ export type AttemptCreateManyDeveloperInput = {
 export type AttemptUpdateWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -831,7 +831,7 @@ export type AttemptUncheckedUpdateWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assessmentId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -845,7 +845,7 @@ export type AttemptUncheckedUpdateManyWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assessmentId?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  passed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  isPassed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -862,7 +862,7 @@ export type AttemptSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   assessmentId?: boolean
   developerId?: boolean
   score?: boolean
-  passed?: boolean
+  isPassed?: boolean
   startedAt?: boolean
   endedAt?: boolean
   submittedAt?: boolean
@@ -879,7 +879,7 @@ export type AttemptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   assessmentId?: boolean
   developerId?: boolean
   score?: boolean
-  passed?: boolean
+  isPassed?: boolean
   startedAt?: boolean
   endedAt?: boolean
   submittedAt?: boolean
@@ -896,7 +896,7 @@ export type AttemptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   assessmentId?: boolean
   developerId?: boolean
   score?: boolean
-  passed?: boolean
+  isPassed?: boolean
   startedAt?: boolean
   endedAt?: boolean
   submittedAt?: boolean
@@ -913,7 +913,7 @@ export type AttemptSelectScalar = {
   assessmentId?: boolean
   developerId?: boolean
   score?: boolean
-  passed?: boolean
+  isPassed?: boolean
   startedAt?: boolean
   endedAt?: boolean
   submittedAt?: boolean
@@ -923,7 +923,7 @@ export type AttemptSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assessmentId" | "developerId" | "score" | "passed" | "startedAt" | "endedAt" | "submittedAt" | "evaluatedAt" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["attempt"]>
+export type AttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assessmentId" | "developerId" | "score" | "isPassed" | "startedAt" | "endedAt" | "submittedAt" | "evaluatedAt" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["attempt"]>
 export type AttemptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assessment?: boolean | Prisma.AssessmentDefaultArgs<ExtArgs>
   developer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -948,7 +948,7 @@ export type $AttemptPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     assessmentId: string
     developerId: string
     score: number | null
-    passed: boolean | null
+    isPassed: boolean | null
     startedAt: Date
     endedAt: Date | null
     submittedAt: Date | null
@@ -1385,7 +1385,7 @@ export interface AttemptFieldRefs {
   readonly assessmentId: Prisma.FieldRef<"Attempt", 'String'>
   readonly developerId: Prisma.FieldRef<"Attempt", 'String'>
   readonly score: Prisma.FieldRef<"Attempt", 'Int'>
-  readonly passed: Prisma.FieldRef<"Attempt", 'Boolean'>
+  readonly isPassed: Prisma.FieldRef<"Attempt", 'Boolean'>
   readonly startedAt: Prisma.FieldRef<"Attempt", 'DateTime'>
   readonly endedAt: Prisma.FieldRef<"Attempt", 'DateTime'>
   readonly submittedAt: Prisma.FieldRef<"Attempt", 'DateTime'>

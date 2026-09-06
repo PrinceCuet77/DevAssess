@@ -8,7 +8,7 @@ model Attempt {
   developer   User   @relation(fields: [developerId], references: [id], onDelete: Cascade)
 
   score   Int?
-  passed  Boolean?
+  isPassed  Boolean?
 
   startedAt   DateTime  @default(now())
   endedAt     DateTime?
