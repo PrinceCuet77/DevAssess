@@ -274,26 +274,26 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 
 ### `/assessments` — public catalog, no auth
 
-| Method | Path                     | Description                                                                                                                          |
-| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Method | Path                     | Description                                                                                                                                              |
+| ------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/`                      | `tags` (repeatable: `?tags=node&tags=react`), `minPrice`, `maxPrice`, `search`, `page`, `limit`, `sortBy=title\|price\|createdAt\|duration`, `sortOrder` |
-| GET    | `/:assessmentId`         | Single assessment — **`answers` omitted**                                                                                            |
-| GET    | `/:assessmentId/reviews` | `page`, `limit`, `sortBy=createdAt\|rating`, `sortOrder`                                                                             |
+| GET    | `/:assessmentId`         | Single assessment — **`answers` omitted**                                                                                                                |
+| GET    | `/:assessmentId/reviews` | `page`, `limit`, `sortBy=createdAt\|rating`, `sortOrder`                                                                                                 |
 
 ### `/evaluator` — `EVALUATOR`
 
-| Method | Path                            | Description                                                                                                                                                            |
-| ------ | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/dashboard`                    | Evaluator overview                                                                                                                                                     |
-| POST   | `/assessment/thumbnail/presign` | Body `{ fileName, fileType }` (image mime)                                                                                                                             |
-| POST   | `/assessment`                   | Create — `title`, `duration`, `price`, `passingPercentage` (1–100), `questions[]`, `answer[]`, optional `description`, `thumbnailKey`, `tags` (array of strings) |
-| GET    | `/assessments`                  | Own list — `status`, `search`, `duration`, `minPrice`, `maxPrice`, pagination, sorting                                                                                 |
-| GET    | `/assessments/:assessmentId`    | Full detail incl. answers — `EVALUATOR` or `ADMIN`                                                                                                                     |
-| PATCH  | `/assessments/:assessmentId`    | Partial update; `status` may be set to `DRAFT`, `PUBLISHED`, or `ARCHIVED`                                                                                             |
-| DELETE | `/assessments/:assessmentId`    | Soft delete (`status = DELETED` + `deletedAt`)                                                                                                                         |
-| GET    | `/purchases`                    | Purchases of own assessments — `paymentStatus`, `assessmentId`, `customerId`, `search`, pagination                                                                     |
-| GET    | `/purchases/:purchaseId`        | Single purchase                                                                                                                                                        |
-| PATCH  | `/purchases/:purchaseId`        | Body `{ price }`                                                                                                                                                       |
+| Method | Path                            | Description                                                                                                                                                                                                     |
+| ------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/dashboard`                    | Evaluator overview                                                                                                                                                                                              |
+| POST   | `/assessment/thumbnail/presign` | Body `{ fileName, fileType }` (image mime)                                                                                                                                                                      |
+| POST   | `/assessment`                   | Create — `title`, `duration`, `price`, `passingPercentage` (1–100), `questions[]`, `answer[]`, optional `description`, `thumbnailKey`, `tags` (array of strings)                                                |
+| GET    | `/assessments`                  | Own list — `status`, `search`, `duration`, `minPrice`, `maxPrice`, pagination, sorting                                                                                                                          |
+| GET    | `/assessments/:assessmentId`    | Full detail incl. answers — `EVALUATOR` or `ADMIN`                                                                                                                                                              |
+| PATCH  | `/assessments/:assessmentId`    | Partial update; `status` may be set to `DRAFT`, `PUBLISHED`, or `ARCHIVED`                                                                                                                                      |
+| DELETE | `/assessments/:assessmentId`    | Soft delete (`status = DELETED` + `deletedAt`)                                                                                                                                                                  |
+| GET    | `/purchases`                    | Purchases of own assessments — `paymentStatus`, `assessmentId`, `customerId`, `search`, pagination. Response adds a per-evaluator `subtotal` alongside the order `price` (an order can span several evaluators) |
+| GET    | `/purchases/:purchaseId`        | Single purchase, same `subtotal` field                                                                                                                                                                          |
+| PATCH  | `/purchases/:purchaseId`        | Body `{ price }`                                                                                                                                                                                                |
 
 ### `/purchases` — `DEVELOPER` (list/read also `ADMIN`)
 
@@ -316,21 +316,23 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 
 ### `/developer` — `DEVELOPER`
 
-| Method | Path                                  | Description                                                                         |
-| ------ | ------------------------------------- | ----------------------------------------------------------------------------------- |
-| GET    | `/dashboard`                          | Developer overview                                                                  |
-| POST   | `/assessments/:assessmentId/evaluate` | Body `{ selectedAnswer: [{ questionId, answer }] }` — scores and records an attempt |
-| GET    | `/assessments/:assessmentId/attempts` | `status`, pagination, `sortBy=createdAt\|score`                                     |
+| Method | Path                                  | Description                                                                                                                                   |
+| ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/dashboard`                          | Developer overview                                                                                                                            |
+| GET    | `/assessments/:assessmentId/start`    | Verifies the assessment is `PUBLISHED` and paid for, then creates an `Attempt` (`IN_PROGRESS`, `endedAt` = now + the assessment's `duration`) |
+| PATCH  | `/assessments/:assessmentId/submit`   | Body `{ attemptId }` — marks that attempt `SUBMITTED`                                                                                         |
+| PATCH  | `/assessments/:assessmentId/evaluate` | Body `{ attemptId, answers: [{ questionId, answer }] }` — scores against the answer key and marks the attempt `EVALUATED`                     |
+| GET    | `/assessments/:assessmentId/attempts` | `status`, pagination, `sortBy=createdAt\|score`                                                                                               |
 
 ### `/reviews` — `DEVELOPER`
 
-| Method | Path         | Description                                                                                       |
-| ------ | ------------ | ------------------------------------------------------------------------------------------------- |
-| POST   | `/`          | Body `{ purchaseId, rating (1–5), comment }` — requires an `EVALUATED` attempt on a paid purchase |
-| GET    | `/`          | Own reviews — `search`, pagination, `sortBy=createdAt\|rating`                                    |
-| GET    | `/:reviewId` | Single review                                                                                     |
-| PATCH  | `/:reviewId` | Update `rating` and/or `comment`                                                                  |
-| DELETE | `/:reviewId` | Soft delete (`deletedAt`)                                                                         |
+| Method | Path         | Description                                                                                                                                           |
+| ------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/`          | Body `{ assessmentId, rating (1–5), comment (1–1000 chars) }` — requires an `EVALUATED` attempt on that assessment; 409 if you've already reviewed it |
+| GET    | `/`          | Own reviews — `search`, pagination, `sortBy=createdAt\|rating`                                                                                        |
+| GET    | `/:reviewId` | Single review                                                                                                                                         |
+| PATCH  | `/:reviewId` | Update `rating` and/or `comment`                                                                                                                      |
+| DELETE | `/:reviewId` | Soft delete (`deletedAt`)                                                                                                                             |
 
 ### `/admin` — `ADMIN`
 
@@ -394,9 +396,21 @@ Keys are namespaced per user — `${userId}/avatar/<uuid>.<ext>` and `${creatorI
 
 ### Evaluation
 
-There is no start/submit endpoint — **attempts are created only at evaluation time**. `POST /developer/assessments/:assessmentId/evaluate` verifies the assessment is `PUBLISHED` and paid for, checks every question is answered exactly once with a valid option id, scores against the answer key, and creates one `Attempt` with `startedAt`/`endedAt`/`submittedAt`/`evaluatedAt` all set to now and status `EVALUATED`.
+Attempts now have a real start → submit → evaluate lifecycle:
 
-The other `AttemptStatus` values (`IDLE`, `IN_PROGRESS`, `SUBMITTED`, `EXPIRED`) exist in the schema but nothing writes them — treat the timed-attempt lifecycle as unimplemented.
+```
+GET   /developer/assessments/:assessmentId/start     → verifies PUBLISHED + paid for, creates an Attempt
+                                                        (status IN_PROGRESS, endedAt = now + assessment.duration)
+PATCH /developer/assessments/:assessmentId/submit    → body { attemptId } → status SUBMITTED
+PATCH /developer/assessments/:assessmentId/evaluate  → body { attemptId, answers: [{ questionId, answer }] }
+                                                        re-verifies paid for, requires every question answered
+                                                        exactly once with a valid option id, scores against the
+                                                        answer key, sets score/isPassed/evaluatedAt, status EVALUATED
+```
+
+`evaluate` returns `{ assessment, evaluation: { attemptId, totalMarks, obtainedMarks, percentage, isPassed, questionResults, ... }, attemptHistory }`. Both `submit` and `evaluate` reject an attempt whose status is already `EVALUATED`, but neither route currently checks `endedAt`, so a "timed out" attempt can still be submitted/evaluated late.
+
+The `EXPIRED` `AttemptStatus` value exists in the schema but nothing writes it.
 
 ### Soft deletes, two mechanisms
 
