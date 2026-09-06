@@ -4,9 +4,11 @@ import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import {
   ICreateAssessmentPayload,
+  IGetMyAssessmentPurchasesQuery,
   IGetMyAssessmentsQuery,
   IPresignThumbnailUploadPayload,
   IUpdateAssessmentPayload,
+  IUpdateMyAssessmentPurchasePayload,
 } from './evaluator.interfaces';
 import { evaluatorServices } from './evaluator.services';
 
@@ -111,6 +113,69 @@ const deleteSingleAssessmentById = catchAsync(
   },
 );
 
+const getMyAssessmentPurchaseList = catchAsync(
+  async (req: Request, res: Response) => {
+    const { purchases, meta } =
+      await evaluatorServices.getMyAssessmentPurchaseList(
+        req.user!.id,
+        req.query as unknown as IGetMyAssessmentPurchasesQuery,
+      );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment purchases retrieved successfully',
+      data: purchases,
+      meta,
+    });
+  },
+);
+
+const getMyAssessmentPurchaseByPurchaseId = catchAsync(
+  async (req: Request, res: Response) => {
+    const purchase = await evaluatorServices.getMyAssessmentPurchaseByPurchaseId(
+      req.user!.id,
+      req.params.purchaseId as string,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment purchase retrieved successfully',
+      data: purchase,
+    });
+  },
+);
+
+const updateMyAssessmentPurchaseByPurchaseId = catchAsync(
+  async (req: Request, res: Response) => {
+    const purchase =
+      await evaluatorServices.updateMyAssessmentPurchaseByPurchaseId(
+        req.user!.id,
+        req.params.purchaseId as string,
+        req.body as IUpdateMyAssessmentPurchasePayload,
+      );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Assessment purchase updated successfully',
+      data: purchase,
+    });
+  },
+);
+
+const getDashboard = catchAsync(async (req: Request, res: Response) => {
+  const dashboard = await evaluatorServices.getDashboard(req.user!.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Dashboard retrieved successfully',
+    data: dashboard,
+  });
+});
+
 export const evaluatorControllers = {
   presignThumbnailUpload,
   createAssessment,
@@ -118,4 +183,8 @@ export const evaluatorControllers = {
   getSingleAssessmentByIdForEvaluatorOrAdmin,
   updateSingleAssessmentById,
   deleteSingleAssessmentById,
+  getMyAssessmentPurchaseList,
+  getMyAssessmentPurchaseByPurchaseId,
+  updateMyAssessmentPurchaseByPurchaseId,
+  getDashboard,
 };

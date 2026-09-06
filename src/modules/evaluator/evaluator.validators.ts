@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { AssessmentStatus } from '../../../generated/prisma/client';
+import {
+  AssessmentStatus,
+  PaymentStatus,
+} from '../../../generated/prisma/client';
 
 export const getMyAssessmentsSchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
@@ -18,6 +21,25 @@ export const getMyAssessmentsSchema = z.object({
 
 export const getAssessmentByIdParamSchema = z.object({
   assessmentId: z.string().uuid('Invalid assessment id'),
+});
+
+export const getMyAssessmentPurchasesQuerySchema = z.object({
+  paymentStatus: z.nativeEnum(PaymentStatus).optional(),
+  assessmentId: z.string().uuid('Invalid assessment id').optional(),
+  customerId: z.string().uuid('Invalid customer id').optional(),
+  search: z.string().trim().min(1).optional(),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+  sortBy: z.enum(['createdAt', 'price']).optional().default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+});
+
+export const purchaseIdParamSchema = z.object({
+  purchaseId: z.string().uuid('Invalid purchase id'),
+});
+
+export const updateMyAssessmentPurchaseSchema = z.object({
+  price: z.coerce.number().nonnegative('Price cannot be negative'),
 });
 
 export const presignThumbnailUploadSchema = z.object({

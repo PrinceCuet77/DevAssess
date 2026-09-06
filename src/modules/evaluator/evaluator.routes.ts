@@ -7,12 +7,21 @@ import { evaluatorControllers } from './evaluator.controllers';
 import {
   createAssessmentSchema,
   getAssessmentByIdParamSchema,
+  getMyAssessmentPurchasesQuerySchema,
   getMyAssessmentsSchema,
   presignThumbnailUploadSchema,
+  purchaseIdParamSchema,
   updateAssessmentSchema,
+  updateMyAssessmentPurchaseSchema,
 } from './evaluator.validators';
 
 const router = Router();
+
+router.get(
+  '/dashboard',
+  auth(Role.EVALUATOR),
+  evaluatorControllers.getDashboard,
+);
 
 router.post(
   '/assessment/thumbnail/presign',
@@ -55,6 +64,28 @@ router.delete(
   auth(Role.EVALUATOR),
   validate(getAssessmentByIdParamSchema, 'params'),
   evaluatorControllers.deleteSingleAssessmentById,
+);
+
+router.get(
+  '/purchases',
+  auth(Role.EVALUATOR),
+  validate(getMyAssessmentPurchasesQuerySchema, 'query'),
+  evaluatorControllers.getMyAssessmentPurchaseList,
+);
+
+router.get(
+  '/purchases/:purchaseId',
+  auth(Role.EVALUATOR),
+  validate(purchaseIdParamSchema, 'params'),
+  evaluatorControllers.getMyAssessmentPurchaseByPurchaseId,
+);
+
+router.patch(
+  '/purchases/:purchaseId',
+  auth(Role.EVALUATOR),
+  validate(purchaseIdParamSchema, 'params'),
+  validate(updateMyAssessmentPurchaseSchema),
+  evaluatorControllers.updateMyAssessmentPurchaseByPurchaseId,
 );
 
 export const evaluatorRoutes = router;

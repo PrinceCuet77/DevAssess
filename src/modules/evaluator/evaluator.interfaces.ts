@@ -1,4 +1,7 @@
-import { AssessmentStatus } from '../../../generated/prisma/client';
+import {
+  AssessmentStatus,
+  PaymentStatus,
+} from '../../../generated/prisma/client';
 
 export interface IOption {
   id: string;
@@ -62,4 +65,19 @@ export interface IGetMyAssessmentsQuery {
   search?: string;
   sortBy?: 'title' | 'price' | 'createdAt' | 'duration';
   sortOrder?: 'asc' | 'desc';
+}
+
+export interface IGetMyAssessmentPurchasesQuery {
+  paymentStatus?: PaymentStatus;
+  assessmentId?: string;
+  customerId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: 'createdAt' | 'price';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface IUpdateMyAssessmentPurchasePayload {
+  price: number;
 }
