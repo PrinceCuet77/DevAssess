@@ -4,7 +4,11 @@ import { UserStatus } from '../../../generated/prisma/enums';
 import config from '../../config';
 import { ApiError, ForbiddenError, NotFoundError } from '../../errors/ApiError';
 import { prisma } from '../../lib/prisma';
-import { buildS3PublicUrl, generatePresignedUploadUrl } from '../../lib/s3';
+import {
+  buildS3PublicUrl,
+  deleteS3Object,
+  generatePresignedUploadUrl,
+} from '../../lib/s3';
 import {
   IConfirmAvatarUploadPayload,
   IPresignAvatarUploadPayload,
@@ -13,6 +17,7 @@ import {
 
 const AVATAR_EXTENSION_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
 };
@@ -101,6 +106,22 @@ const confirmAvatarUpload = async (
 };
 
 const deleteAvatar = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { avatarKey: true },
+  });
+
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  if (user.avatarKey && config.aws_s3_avatar_bucket) {
+    await deleteS3Object({
+      bucket: config.aws_s3_avatar_bucket,
+      key: user.avatarKey,
+    });
+  }
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     omit: { password: true },

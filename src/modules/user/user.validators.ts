@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 const ALLOWED_AVATAR_MIME_TYPES = [
   'image/jpeg',
+  'image/jpg',
   'image/png',
   'image/webp',
 ] as const;
