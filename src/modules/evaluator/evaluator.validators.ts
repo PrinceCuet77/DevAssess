@@ -147,11 +147,13 @@ export const createAssessmentSchema = z
   .object({
     title: z.string().trim().min(3, 'Title must be at least 3 characters'),
     description: z.string().trim().optional(),
-    duration: z.coerce
-      .number()
+    duration: z
+      .number({ message: 'Duration must be a number' })
       .int()
       .positive('Duration must be greater than 0'),
-    price: z.coerce.number().nonnegative('Price cannot be negative'),
+    price: z
+      .number({ message: 'Price must be a number' })
+      .nonnegative('Price cannot be negative'),
     passingPercentage: z.coerce
       .number()
       .int()
@@ -189,12 +191,15 @@ export const updateAssessmentSchema = z
       .min(3, 'Title must be at least 3 characters')
       .optional(),
     description: z.string().trim().optional(),
-    duration: z.coerce
-      .number()
+    duration: z
+      .number({ message: 'Duration must be a number' })
       .int()
       .positive('Duration must be greater than 0')
       .optional(),
-    price: z.coerce.number().nonnegative('Price cannot be negative').optional(),
+    price: z
+      .number({ message: 'Price must be a number' })
+      .nonnegative('Price cannot be negative')
+      .optional(),
     passingPercentage: z.coerce
       .number()
       .int()
