@@ -181,8 +181,8 @@ generated/prisma/           # generated client (gitignored)
 **Middleware order** in `src/app.ts` is deliberate:
 
 ```
-cors → express.json → express.urlencoded → cookieParser → passport.initialize()
-      → routes → notFound → globalErrorHandler
+helmet() → rate limiter (100 req / 15 min per IP) → cors → express.json → express.urlencoded
+         → cookieParser → passport.initialize() → routes → notFound → globalErrorHandler
 ```
 
 > **Deploying?** `src/templates/` must be present next to `dist/` — the EJS files are resolved relative to `process.cwd()` at runtime and are not bundled by tsup.

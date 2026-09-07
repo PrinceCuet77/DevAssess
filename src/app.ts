@@ -1,6 +1,8 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { notFound } from './middlewares/notFound';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
 import { AuthRoutes } from './modules/auth/auth.routes';
@@ -16,6 +18,21 @@ import { developerRoutes } from './modules/developer/developer.routes';
 import { adminRoutes } from './modules/admin/admin.routes';
 
 const app: Application = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+    errorSources: [],
+  },
+});
+
+app.use(helmet());
+app.use(limiter);
 
 app.use(cors());
 
