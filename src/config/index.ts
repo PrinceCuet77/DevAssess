@@ -25,7 +25,7 @@ export default {
   google_client_id: process.env.GOOGLE_CLIENT_ID,
   google_client_secret: process.env.GOOGLE_CLIENT_SECRET,
   google_callback_url: process.env.GOOGLE_REDIRECT_URI,
-  frontend_url: process.env.FRONTEND_URL,
+  frontend_url: process.env.FRONTEND_URL!,
   backend_api_url: process.env.BACKEND_API_URL,
   aws_region: process.env.AWS_REGION,
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,

@@ -16,6 +16,7 @@ import { paymentRoutes } from './modules/payments/payments.routes';
 import { purchasesRoutes } from './modules/purchases/purchases.routes';
 import { developerRoutes } from './modules/developer/developer.routes';
 import { adminRoutes } from './modules/admin/admin.routes';
+import config from './config';
 
 const app: Application = express();
 
@@ -26,7 +27,8 @@ const limiter = rateLimit({
   legacyHeaders: false,
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again after 15 minutes',
+    message:
+      'Too many requests from this IP, please try again after 15 minutes',
     errorSources: [],
   },
 });
@@ -34,7 +36,12 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(limiter);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [config.frontend_url],
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
