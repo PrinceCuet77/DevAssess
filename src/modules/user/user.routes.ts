@@ -5,6 +5,7 @@ import { Role } from '../../../generated/prisma/client';
 import { auth } from '../../middlewares/auth';
 import { validate } from '../../middlewares/validator';
 import {
+  changePasswordSchema,
   confirmAvatarUploadSchema,
   presignAvatarUploadSchema,
   updateUserProfileSchema,
@@ -20,6 +21,13 @@ router.patch(
   auth(...authenticatedRoles),
   validate(updateUserProfileSchema),
   userControllers.updateUserProfile,
+);
+
+router.patch(
+  '/me/change-password',
+  auth(...authenticatedRoles),
+  validate(changePasswordSchema),
+  userControllers.changePassword,
 );
 
 router.post(

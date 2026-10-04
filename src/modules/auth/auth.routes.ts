@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AuthControllers } from './auth.controllers';
 import { validate } from '../../middlewares/validator';
-import { forgotPasswordSchema, loginUserSchema, registerUserSchema, resetPasswordSchema, verifyUserEmailSchema } from './auth.validators';
+import { forgotPasswordSchema, loginUserSchema, registerUserSchema, resendOtpSchema, resetPasswordSchema, verifyUserEmailSchema } from './auth.validators';
 import passport from 'passport';
 
 const router = Router();
@@ -10,6 +10,12 @@ router.post(
   '/register',
   validate(registerUserSchema),
   AuthControllers.registerUser,
+);
+
+router.post(
+  '/resend-otp',
+  validate(resendOtpSchema),
+  AuthControllers.resendOtp,
 );
 
 router.post(

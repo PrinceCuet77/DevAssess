@@ -15,3 +15,8 @@ export interface IPresignAvatarUploadPayload {
 export interface IConfirmAvatarUploadPayload {
   key: string;
 }
+
+export interface IChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}

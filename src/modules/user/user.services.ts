@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import httpStatus from 'http-status';
 import { UserStatus } from '../../../generated/prisma/enums';
@@ -10,6 +11,7 @@ import {
   generatePresignedUploadUrl,
 } from '../../lib/s3';
 import {
+  IChangePasswordPayload,
   IConfirmAvatarUploadPayload,
   IPresignAvatarUploadPayload,
   IUpdateUserProfilePayload,
@@ -46,6 +48,45 @@ const updateUserProfileIntoDB = async (
   });
 
   return updatedUser;
+};
+
+const changePassword = async (
+  userId: string,
+  payload: IChangePasswordPayload,
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { password: true },
+  });
+
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  if (!user.password) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'This account has no password set. Use forgot password to create one.',
+    );
+  }
+
+  const isCurrentPasswordValid = await bcrypt.compare(
+    payload.currentPassword,
+    user.password,
+  );
+  if (!isCurrentPasswordValid) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Current password is incorrect');
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
 };
 
 const presignAvatarUpload = async (
@@ -139,6 +180,7 @@ const deleteUserAccount = async (userId: string) => {
 };
 
 export const userServices = {
+  changePassword,
   getUserProfileFromDB,
   updateUserProfileIntoDB,
   presignAvatarUpload,

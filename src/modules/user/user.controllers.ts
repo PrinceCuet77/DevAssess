@@ -34,6 +34,19 @@ const updateUserProfile = catchAsync(
   },
 );
 
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await userServices.changePassword(req.user!.id, req.body);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Password changed successfully',
+      data: null,
+    });
+  },
+);
+
 const presignAvatarUpload = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await userServices.presignAvatarUpload(
@@ -97,6 +110,7 @@ const deleteUserAccount = catchAsync(
 export const userControllers = {
   getUserProfile,
   updateUserProfile,
+  changePassword,
   presignAvatarUpload,
   updateUserAvatarUrl,
   deleteUserAvatar,

@@ -24,6 +24,19 @@ const registerUser = catchAsync(
   },
 );
 
+const resendOtp = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await AuthServices.resendRegistrationOtp(req.body);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'A new OTP has been sent to your email',
+      data: null,
+    });
+  },
+);
+
 const verifyUserEmail = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     await AuthServices.verifyUserEmail(req.body);
@@ -183,6 +196,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
 export const AuthControllers = {
   registerUser,
+  resendOtp,
   verifyUserEmail,
   loginUser,
   logoutUser,

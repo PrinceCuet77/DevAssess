@@ -67,9 +67,10 @@ const registerUser = async (payload: IRegisterPayload) => {
 
   const expirationSeconds = 5 * 60;
   const otpKey = `user-registration-otp:${email}`;
-  const otpValue = crypto.randomInt(100000, 1000000).toString();
+  const otp = crypto.randomInt(100000, 1000000).toString();
+  console.log('Generated OTP for register:-------------------------', otp);
 
-  await redisClient.set(otpKey, otpValue, {
+  await redisClient.set(otpKey, otp, {
     expiration: {
       type: 'EX',
       value: expirationSeconds,
@@ -102,11 +103,56 @@ const registerUser = async (payload: IRegisterPayload) => {
 
   const templateData = {
     email,
-    otp: otpValue,
+    otp,
     expirationMinutes: expirationSeconds / 60,
   };
 
   const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: 'Email Verification',
+    html,
+  });
+};
+
+const resendRegistrationOtp = async (payload: { email: string }) => {
+  const email = payload.email.trim().toLowerCase();
+
+  const userRegistrationKey = `user-registration-data:${email}`;
+  const pendingRegistration = await redisClient.get(userRegistrationKey);
+  if (!pendingRegistration) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'No pending registration found for this email. Please register again.',
+    );
+  }
+
+  const expirationSeconds = 5 * 60;
+  const otpKey = `user-registration-otp:${email}`;
+  const otp = crypto.randomInt(100000, 1000000).toString();
+  console.log(
+    'Generated OTP for resend otp:-------------------------',
+    otp,
+  );
+
+  // Overwriting the key invalidates any previous OTP.
+  await redisClient.set(otpKey, otp, {
+    expiration: { type: 'EX', value: expirationSeconds },
+  });
+  await redisClient.expire(userRegistrationKey, expirationSeconds);
+
+  const templatePath = path.join(
+    process.cwd(),
+    'src/templates/registration-user-otp.ejs',
+  );
+
+  const html = await ejs.renderFile(templatePath, {
+    email,
+    otp,
+    expirationMinutes: expirationSeconds / 60,
+  });
 
   await transporter.sendMail({
     from: config.email_sender,
@@ -300,6 +346,10 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   }
 
   const otp = crypto.randomInt(100000, 1000000).toString();
+  console.log(
+    'Generated OTP for forgot password:-------------------------',
+    otp,
+  );
   const key = `forgor-password-otp:${isUserExist.email}`;
   const expirationSeconds = 5 * 60;
 
@@ -419,6 +469,7 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 
 export const AuthServices = {
   registerUser,
+  resendRegistrationOtp,
   verifyUserEmail,
   refreshTokenIntoNewAccessToken,
   forgotPassword,

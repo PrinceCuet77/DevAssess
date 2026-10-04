@@ -7,6 +7,10 @@ export const registerUserSchema = z.object({
   role: z.enum([Role.DEVELOPER, Role.EVALUATOR]),
 });
 
+export const resendOtpSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
+});
+
 export const verifyUserEmailSchema = z.object({
   email: z.string().trim().toLowerCase().email('Invalid email address'),
   otp: z.string().length(6, 'OTP must be 6 digits'),
