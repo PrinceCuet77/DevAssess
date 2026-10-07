@@ -188,7 +188,7 @@ const getSingleAssessmentById = async (
   });
 
   if (!assessment) {
-    throw new NotFoundError('Assessment not found or access denied');
+    throw new NotFoundError('Assessment not found');
   }
 
   return assessment;
@@ -204,7 +204,7 @@ const updateSingleAssessmentById = async (
   });
 
   if (!assessment) {
-    throw new NotFoundError('Assessment not found or access denied');
+    throw new NotFoundError('Assessment not found');
   }
 
   const { thumbnailKey, questions, answer, status, ...rest } = payload;
@@ -269,12 +269,8 @@ const deleteSingleAssessmentById = async (
     where: { id: assessmentId, creatorId: userId },
   });
 
-  if (!assessment) {
-    throw new NotFoundError('Assessment not found or access denied');
-  }
-
-  if (assessment.status === AssessmentStatus.DELETED) {
-    throw new NotFoundError('Assessment not found or access denied');
+  if (!assessment || assessment.status === AssessmentStatus.DELETED) {
+    throw new NotFoundError('Assessment not found');
   }
 
   await prisma.assessment.update({

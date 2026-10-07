@@ -5,6 +5,7 @@ import { validate } from '../../middlewares/validator';
 import { developerControllers } from './developer.controllers';
 import {
   assessmentIdParamSchema,
+  attemptIdParamSchema,
   evaluateAssessmentSchema,
   getAllAttemptsQuerySchema,
   submitAssessmentSchema,
@@ -47,6 +48,13 @@ router.get(
   validate(assessmentIdParamSchema, 'params'),
   validate(getAllAttemptsQuerySchema, 'query'),
   developerControllers.getAllAttemptsByAssessmentId,
+);
+
+router.get(
+  '/assessments/:assessmentId/attempts/:attemptId',
+  auth(Role.DEVELOPER),
+  validate(attemptIdParamSchema, 'params'),
+  developerControllers.getAttemptById,
 );
 
 export const developerRoutes = router;

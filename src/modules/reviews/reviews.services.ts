@@ -150,7 +150,7 @@ const getReviewById = async (developerId: string, reviewId: string) => {
   });
 
   if (!review) {
-    throw new NotFoundError('Review not found or access denied');
+    throw new NotFoundError('Review not found');
   }
 
   return review;
@@ -170,7 +170,7 @@ const updateReviewInDB = async (
   });
 
   if (!review) {
-    throw new NotFoundError('Review not found or access denied');
+    throw new NotFoundError('Review not found');
   }
 
   const data: Prisma.ReviewUpdateInput = {};
@@ -201,7 +201,7 @@ const deleteReviewInDB = async (developerId: string, reviewId: string) => {
   });
 
   if (!review) {
-    throw new NotFoundError('Review not found or access denied');
+    throw new NotFoundError('Review not found');
   }
 
   await prisma.review.update({

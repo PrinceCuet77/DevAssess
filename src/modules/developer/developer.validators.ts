@@ -5,6 +5,11 @@ export const assessmentIdParamSchema = z.object({
   assessmentId: z.string().uuid('Invalid assessment ID format'),
 });
 
+export const attemptIdParamSchema = z.object({
+  assessmentId: z.string().uuid('Invalid assessment ID format'),
+  attemptId: z.string().uuid('Invalid attempt ID format'),
+});
+
 const selectedAnswerSchema = z.object({
   questionId: z.string().trim().min(1, 'Question id is required'),
   answer: z.string().trim().min(1, 'Answer is required'),

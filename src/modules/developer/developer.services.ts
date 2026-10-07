@@ -50,6 +50,18 @@ const attemptHistorySelect = {
   createdAt: true,
 } satisfies Prisma.AttemptSelect;
 
+// Only what the exam screen needs; the answer key lives in a separate column and is never sent.
+const toPublicQuestions = (questions: unknown): IQuestion[] =>
+  (questions as IQuestion[]).map((question) => ({
+    id: question.id,
+    question: question.question,
+    marks: question.marks,
+    options: question.options.map((option) => ({
+      id: option.id,
+      text: option.text,
+    })),
+  }));
+
 const verifyPurchased = async (developerId: string, assessmentId: string) => {
   const purchasedItem = await prisma.purchaseItem.findFirst({
     where: {
@@ -71,7 +83,7 @@ const verifyPurchased = async (developerId: string, assessmentId: string) => {
 const startAssessment = async (developerId: string, assessmentId: string) => {
   const assessment = await prisma.assessment.findFirst({
     where: { id: assessmentId, status: AssessmentStatus.PUBLISHED },
-    select: { id: true, duration: true },
+    select: { id: true, duration: true, questions: true },
   });
 
   if (!assessment) {
@@ -96,7 +108,42 @@ const startAssessment = async (developerId: string, assessmentId: string) => {
     select: attemptHistorySelect,
   });
 
-  return attempt;
+  return { ...attempt, questions: toPublicQuestions(assessment.questions) };
+};
+
+// Lets the exam screen be reopened (refresh, another device) for an attempt that is still running.
+const getAttemptById = async (
+  developerId: string,
+  assessmentId: string,
+  attemptId: string,
+) => {
+  const assessment = await prisma.assessment.findUnique({
+    where: { id: assessmentId },
+    select: { ...assessmentDetailsSelect, questions: true },
+  });
+
+  if (!assessment) {
+    throw new NotFoundError('Assessment not found');
+  }
+
+  await verifyPurchased(developerId, assessmentId);
+
+  const attempt = await prisma.attempt.findFirst({
+    where: { id: attemptId, assessmentId, developerId },
+    select: attemptHistorySelect,
+  });
+
+  if (!attempt) {
+    throw new NotFoundError('Attempt not found');
+  }
+
+  const { questions, ...assessmentDetails } = assessment;
+
+  return {
+    assessment: assessmentDetails,
+    attempt,
+    questions: toPublicQuestions(questions),
+  };
 };
 
 const submitAssessment = async (
@@ -467,6 +514,7 @@ const getDashboard = async (developerId: string) => {
 
 export const developerServices = {
   startAssessment,
+  getAttemptById,
   submitAssessment,
   evaluateAssessment,
   getAllAttemptsByAssessmentId,

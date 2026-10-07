@@ -23,6 +23,21 @@ const startAssessment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAttemptById = catchAsync(async (req: Request, res: Response) => {
+  const result = await developerServices.getAttemptById(
+    req.user!.id,
+    req.params.assessmentId as string,
+    req.params.attemptId as string,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Attempt is retrieved successfully',
+    data: result,
+  });
+});
+
 const submitAssessment = catchAsync(async (req: Request, res: Response) => {
   const attempt = await developerServices.submitAssessment(
     req.user!.id,
@@ -85,6 +100,7 @@ const getDashboard = catchAsync(async (req: Request, res: Response) => {
 
 export const developerControllers = {
   startAssessment,
+  getAttemptById,
   submitAssessment,
   evaluateAssessment,
   getAllAttemptsByAssessmentId,
