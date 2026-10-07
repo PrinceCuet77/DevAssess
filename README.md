@@ -140,6 +140,8 @@ All of these are read in exactly one place — `src/config/index.ts`. Import `co
 | `npx prisma generate`    | Regenerate the client into `generated/prisma` — run after **any** schema change                                      |
 | `npx prisma migrate dev` | Create and apply a migration under `prisma/migrations`                                                               |
 
+> Postman: `postman-collections/` holds a collection and an environment file covering the API.
+
 > There is no test suite and no linter. `tsconfig.json` has `strict` on but no `include`, and `tsup` does not typecheck, so **a type error will not fail the build** — verify changes by running the server.
 
 ### Prisma import paths
@@ -252,9 +254,10 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 | Method | Path               | Auth           | Description                                                                                                           |
 | ------ | ------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/register`        | —              | Hashes the password, parks the payload + a 6-digit OTP in Redis (5 min), emails the OTP. **Creates no DB row.**       |
+| POST   | `/resend-otp`      | —              | Body `{ email }` — issues a fresh registration OTP (invalidating the old one) and resets both Redis TTLs to 5 min. 400 if no pending registration exists. |
 | POST   | `/verify-email`    | —              | Consumes the OTP; creates the user or links a `CREDENTIALS` auth to an existing Google-only account. Returns tokens.  |
 | POST   | `/login`           | —              | Passport local strategy; blocks `SUSPENDED`/`DELETED`. Sets cookies and returns tokens.                               |
-| GET    | `/logout`          | —              | Clears auth cookies                                                                                                   |
+| POST   | `/logout`          | —              | Clears auth cookies                                                                                                   |
 | POST   | `/refresh-token`   | refresh cookie | Issues a new access token                                                                                             |
 | GET    | `/google`          | —              | Starts the OAuth flow (`profile`, `email` scopes)                                                                     |
 | GET    | `/google/callback` | —              | Links or creates a user (new ones get `DEVELOPER`), then redirects to `${FRONTEND_URL}/auth/success` with cookies set |
@@ -267,6 +270,7 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 | ------ | -------------------- | ------------------------------------------------------------------------------------------------------- |
 | GET    | `/me`                | Current profile                                                                                         |
 | PATCH  | `/me`                | Update `name`, `bio`, `profession`, `company`, `experience`, `skills`                                   |
+| PATCH  | `/me/change-password` | Body `{ currentPassword, newPassword (min 6, must differ) }` — verifies the current password. Google-only accounts (no password) get a 400 pointing to forgot-password |
 | POST   | `/me/avatar/presign` | Body `{ contentType, fileSize }` — `image/jpeg\|png\|webp`, max 5 MB. Returns `{ uploadUrl, key, ... }` |
 | PATCH  | `/me/avatar`         | Body `{ key }` — confirms the upload after the client `PUT`s to S3                                      |
 | DELETE | `/me/avatar`         | Clears the avatar columns (the S3 object is left in place)                                              |
@@ -319,10 +323,11 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 | Method | Path                                  | Description                                                                                                                                   |
 | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | GET    | `/dashboard`                          | Developer overview                                                                                                                            |
-| GET    | `/assessments/:assessmentId/start`    | Verifies the assessment is `PUBLISHED` and paid for, then creates an `Attempt` (`IN_PROGRESS`, `endedAt` = now + the assessment's `duration`) |
+| GET    | `/assessments/:assessmentId/start`    | Verifies the assessment is `PUBLISHED` and paid for, then creates an `Attempt` (`IN_PROGRESS`, `endedAt` = now + the assessment's `duration`). Returns the attempt plus `questions` (answer key stripped) |
 | PATCH  | `/assessments/:assessmentId/submit`   | Body `{ attemptId }` — marks that attempt `SUBMITTED`                                                                                         |
 | PATCH  | `/assessments/:assessmentId/evaluate` | Body `{ attemptId, answers: [{ questionId, answer }] }` — scores against the answer key and marks the attempt `EVALUATED`                     |
 | GET    | `/assessments/:assessmentId/attempts` | `status`, pagination, `sortBy=createdAt\|score`                                                                                               |
+| GET    | `/assessments/:assessmentId/attempts/:attemptId` | Re-opens one of your own attempts (e.g. after a refresh or on another device) — re-verifies paid for, returns `{ assessment, attempt, questions }` with the answer key stripped. 404 for someone else's attempt |
 
 ### `/reviews` — `DEVELOPER`
 
@@ -353,6 +358,7 @@ Base path: **`/api/v1`**. Auth is the `accessToken` cookie or an `Authorization:
 
 ```
 POST /auth/register  →  password hashed, payload + OTP stored in Redis (5 min TTL), OTP emailed
+POST /auth/resend-otp  →  (optional) new OTP replaces the old one, both keys' TTL reset to 5 min
 POST /auth/verify-email  →  OTP consumed  →  User created (or CREDENTIALS auth linked)  →  tokens returned
 ```
 
@@ -401,6 +407,9 @@ Attempts now have a real start → submit → evaluate lifecycle:
 ```
 GET   /developer/assessments/:assessmentId/start     → verifies PUBLISHED + paid for, creates an Attempt
                                                         (status IN_PROGRESS, endedAt = now + assessment.duration)
+                                                        and returns it with the questions (no answer key)
+GET   /developer/assessments/:assessmentId/attempts/:attemptId
+                                                     → re-fetch a running attempt + its questions (refresh/resume)
 PATCH /developer/assessments/:assessmentId/submit    → body { attemptId } → status SUBMITTED
 PATCH /developer/assessments/:assessmentId/evaluate  → body { attemptId, answers: [{ questionId, answer }] }
                                                         re-verifies paid for, requires every question answered
